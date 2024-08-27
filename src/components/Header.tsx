@@ -6,6 +6,8 @@ import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/rootReducer";
 
 // import Web3Connect from "./common/Web3Connect";
 
@@ -18,12 +20,14 @@ export interface NavigationItem {
 }
 
 const navigation = [
-  { name: 'Companies', href: '' },
+  { name: 'Agents', href: '' },
 ]
 
 export default function Header(Logo:any) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const router = useRouter();
+  const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
+
 
   return (
     <>
@@ -32,12 +36,9 @@ export default function Header(Logo:any) {
         <link rel="icon" href="/logo.svg" />
       </Head>
       <header className="bg-white">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+        <nav style={{maxWidth: "90%"}} className="mx-auto flex items-center justify-between p-6 lg:px-8" aria-label="Global">
        
-          <a href="#" className="-m-1.5 p-1.5">
-          <img onClick={() => router.push('/')} className="h-8 w-auto" src="https://media.licdn.com/dms/image/D4D03AQGomI3g6Gx5Rg/profile-displayphoto-shrink_800_800/0/1666711319385?e=1694649600&v=beta&t=XS-FEdl_hiz1y6HBbGxIcekQiyquNefQ6EE99UVLSSQ" alt="" />
-        
-          </a>
+          <div>{selectedAgent && selectedAgent.name}</div>
           
           <div className="flex lg:hidden">
             <button

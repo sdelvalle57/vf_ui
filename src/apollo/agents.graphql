@@ -1,0 +1,17 @@
+query AllAgents {
+  allAgents {
+    id
+    name
+    note
+    createdAt
+  }
+}
+
+mutation CreateAgent($name: String!, $note: String) {
+  createAgent(name: $name, note: $note) {
+    id
+    name
+    note
+    createdAt
+  }
+}

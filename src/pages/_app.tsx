@@ -8,8 +8,9 @@ import { ChakraProvider } from '@chakra-ui/react'
 
 import client from "../apollo/client"
 import Layout from '../components/Layout'
+import { wrapper } from '../redux/store'
 
-export default function Blockchain({ Component, pageProps }: AppProps) {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter()
   const path = router.asPath;
 
@@ -23,3 +24,5 @@ export default function Blockchain({ Component, pageProps }: AppProps) {
         </ApolloProvider>
   )
 }
+
+export default wrapper.withRedux(MyApp);
