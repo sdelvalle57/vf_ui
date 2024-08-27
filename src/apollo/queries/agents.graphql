@@ -1,0 +1,8 @@
+query AllAgents {
+  allAgents {
+    id
+    name
+    note
+    createdAt
+  }
+}
