@@ -21,11 +21,11 @@ export interface NavigationItem {
 
 const navigation = [
   { name: 'Agents', href: '' },
+  { name: 'Resources', href: 'resource_specifications' },
 ]
 
 export default function Header(Logo:any) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const router = useRouter();
   const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
 
 

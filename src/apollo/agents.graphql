@@ -1,3 +1,4 @@
+# Agents
 query AllAgents {
   allAgents {
     id
@@ -13,5 +14,43 @@ mutation CreateAgent($name: String!, $note: String) {
     name
     note
     createdAt
+  }
+}
+
+
+# Resource Specifications
+query ResourceSpecificationsByAgent($agentId: Uuid!) {
+  resourceSpecificationsByAgent(agentId: $agentId) {
+    id
+    agentId
+    name
+    note
+    createdAt
+    resourceType
+    unitOfMeasure
+  }
+}
+
+
+mutation CreateResourceSpecification(
+  $agentId: Uuid!, 
+  $name: String!, 
+  $note: String, 
+  $resourceType: ResourceType!, 
+  $unitOfMeasure: String!
+) {
+  createResourceSpecification(
+    agentId: $agentId, 
+    name: $name, 
+    note: $note, 
+    resourceType: $resourceType, 
+    unitOfMeasure: $unitOfMeasure
+  ) {
+    id
+    agentId
+    name
+    createdAt
+    resourceType
+    unitOfMeasure
   }
 }

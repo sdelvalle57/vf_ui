@@ -11,18 +11,20 @@ import { RootState } from '../redux/rootReducer';
 
 const IndexPage: NextPage = () => {
     const { data, loading, error } = useAllAgentsQuery();
-    
+
     const [agents, setAgents] = useState<Array<Agent>>([]);
+
+    useEffect(() => {
+        if (data?.allAgents) {
+            console.log("aca")
+            setAgents(data.allAgents);
+        }
+    }, [data]);
 
     if (error) return <Alert status='error'>{error.message}</Alert>
     if (loading) return <Spinner />
     if (!data) return null;
 
-    useEffect(() => {
-        if(data.allAgents) {
-            setAgents(data.allAgents)
-        }
-    }, [data]);
 
     const onNewAgent = (agent: Agent) => {
         setAgents([...agents, agent]);
@@ -38,7 +40,7 @@ const IndexPage: NextPage = () => {
 
                 <TabPanels>
                     <TabPanel>
-                        <AgentsTable agents={agents}  />
+                        <AgentsTable agents={agents} />
                     </TabPanel>
                     <TabPanel>
                         <CreateAgent onNewAgent={onNewAgent} />
@@ -60,12 +62,12 @@ const AgentsTable = (props: AgentsTableProps) => {
     const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
 
     const renderSelectAgentButton = (a: Agent) => {
-        if(selectedAgent && selectedAgent.id === a.id) return <Button disabled={true}>Selected</Button>
+        if (selectedAgent && selectedAgent.id === a.id) return <Button disabled={true}>Selected</Button>
         return <Button colorScheme='blue' onClick={() => dispatch(selectAgent(a))}>Select</Button>
     }
 
     return (
-        <TableContainer style={{maxWidth: "80%", textAlign: "center", margin: "2em auto 2em auto"}}>
+        <TableContainer style={{ maxWidth: "80%", textAlign: "center", margin: "2em auto 2em auto" }}>
             <Table>
                 <Thead>
                     <Tr>
@@ -77,7 +79,7 @@ const AgentsTable = (props: AgentsTableProps) => {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    
+
                     {
                         props.agents.map(a => {
                             const date = moment.unix(a.createdAt).format("DD-MM-YYYY")
@@ -109,64 +111,64 @@ const CreateAgent = (props: CreateAgentProps) => {
 
     const [createAgent, { loading, error }] = useCreateAgentMutation({
         onCompleted: (data) => {
-          toast({
-            title: "Agent created.",
-            description: `Agent ${data.createAgent.name} was successfully created.`,
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
-          props.onNewAgent(data.createAgent);
-          setName('');
-          setNote('');
+            toast({
+                title: "Agent created.",
+                description: `Agent ${data.createAgent.name} was successfully created.`,
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
+            props.onNewAgent(data.createAgent);
+            setName('');
+            setNote('');
         },
-      });
+    });
 
-      const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-          await createAgent({ variables: { name, note } });
-          
-        } catch (err: any) {
-          toast({
-            title: "An error occurred.",
-            description: err.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        }
-      };
+            await createAgent({ variables: { name, note } });
 
-      return (
+        } catch (err: any) {
+            toast({
+                title: "An error occurred.",
+                description: err.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+    };
+
+    return (
         <Box maxWidth="400px" mx="auto" mt="5">
-          <form onSubmit={handleSubmit}>
-            <FormControl id="name" isRequired>
-              <FormLabel>Name</FormLabel>
-              <Input
-                placeholder="Enter agent name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </FormControl>
-            <FormControl id="note" mt={4}>
-              <FormLabel>Note</FormLabel>
-              <Textarea
-                placeholder="Enter a note"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-              />
-            </FormControl>
-            <Button
-              mt={4}
-              colorScheme="teal"
-              isLoading={loading}
-              type="submit"
-            >
-              Create Agent
-            </Button>
-            {error && <Box mt={4} color="red.500">Error: {error.message}</Box>}
-          </form>
+            <form onSubmit={handleSubmit}>
+                <FormControl id="name" isRequired>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                        placeholder="Enter agent name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                </FormControl>
+                <FormControl id="note" mt={4}>
+                    <FormLabel>Note</FormLabel>
+                    <Textarea
+                        placeholder="Enter a note"
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                    />
+                </FormControl>
+                <Button
+                    mt={4}
+                    colorScheme="teal"
+                    isLoading={loading}
+                    type="submit"
+                >
+                    Create Agent
+                </Button>
+                {error && <Box mt={4} color="red.500">Error: {error.message}</Box>}
+            </form>
         </Box>
-      )
+    )
 }

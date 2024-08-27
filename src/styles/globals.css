@@ -16,6 +16,13 @@ a {
 }
 
 
+.chakra-alert.css-kgxkdf {
+  width: 50%;
+  margin: auto;
+  justify-content: center;
+}
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
