@@ -31,6 +31,17 @@ query ResourceSpecificationsByAgent($agentId: Uuid!) {
   }
 }
 
+query ResourceSpecificationById($resourceSpecificationId: Uuid!) {
+  resourceSpecificationById(resourceSpecificationId: $resourceSpecificationId) {
+    id
+    agentId
+    name
+    note
+    createdAt
+    resourceType
+    unitOfMeasure
+  }
+}
 
 mutation CreateResourceSpecification(
   $agentId: Uuid!, 
@@ -72,3 +83,39 @@ query EconomicResourcesBySpecificationId($resourceSpecificationId: Uuid!) {
     referenceNumber
   }
 }
+
+mutation CreateEconomicResource(
+  $resourceSpecificationId: Uuid!,
+  $name: String!,
+  $note: String,
+  $accountingQuantity: Int!,
+  $trackingIdentifier: String,
+  $currentLocation: String!,
+  $lot: String,
+  $containedIn: Uuid
+) {
+  createEconomicResource(
+    resourceSpecificationId: $resourceSpecificationId,
+    name: $name,
+    note: $note,
+    accountingQuantity: $accountingQuantity,
+    trackingIdentifier: $trackingIdentifier,
+    currentLocation: $currentLocation,
+    lot: $lot,
+    containedIn: $containedIn
+  ) {
+    id
+    resourceSpecificationId
+    name
+    note
+    accountingQuantity
+    onHandQuantity
+    trackingIdentifier
+    currentLocation
+    lot
+    containedIn
+    createdAt
+    referenceNumber
+  }
+}
+
