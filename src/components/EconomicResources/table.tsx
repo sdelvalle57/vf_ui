@@ -1,5 +1,5 @@
 import { Box, Table, TableContainer, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react";
-import { EconomicResource, ResourceSpecification } from "../../apollo/__generated__/graphql";
+import { EconomicResource } from "../../apollo/__generated__/graphql";
 import moment from "moment";
 
 
@@ -15,7 +15,7 @@ const EconomicResourcesTable = (props: EconomicResourcesProps) => {
     return (
         <Box maxWidth="100%" overflowX="auto">
                 <TableContainer>
-                    <Table variant="striped" colorScheme="teal">
+                    <Table>
                         <Thead>
                             <Tr>
                                 <Th>ID</Th>

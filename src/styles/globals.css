@@ -22,6 +22,11 @@ a {
   justify-content: center;
 }
 
+.recipe_row:hover {
+  background-color: aqua;
+  cursor: pointer;
+}
+
 
 @tailwind base;
 @tailwind components;

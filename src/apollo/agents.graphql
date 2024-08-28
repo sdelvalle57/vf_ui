@@ -119,3 +119,80 @@ mutation CreateEconomicResource(
   }
 }
 
+
+# Recipes
+query RecipesByAgent($agentId: Uuid!) {
+  recipesByAgent(agentId: $agentId) {
+    recipe {
+      id
+      agentId
+      name
+      note
+      createdAt
+    }
+    resourceSpecifications {
+      id
+      agentId
+      name
+      note
+      createdAt
+      resourceType
+      unitOfMeasure
+    }
+  }
+}
+
+query RecipeById($recipeId: Uuid!) {
+  recipeById(recipeId: $recipeId) {
+    recipe {
+      id
+      agentId
+      name
+      note
+      createdAt
+    }
+    resourceSpecifications {
+      id
+      agentId
+      name
+      note
+      createdAt
+      resourceType
+      unitOfMeasure
+    }
+  }
+}
+
+mutation CreateRecipe(
+  $agentId: Uuid!,
+  $name: String!,
+  $note: String,
+  $recipeResources: [Uuid!]!
+) {
+  createRecipe(
+    agentId: $agentId,
+    name: $name,
+    note: $note,
+    recipeResources: $recipeResources
+  ) {
+    recipe {
+      id
+      agentId
+      name
+      note
+      createdAt
+    }
+    resourceSpecifications {
+      id
+      agentId
+      name
+      note
+      createdAt
+      resourceType
+      unitOfMeasure
+    }
+  }
+}
+
+
+

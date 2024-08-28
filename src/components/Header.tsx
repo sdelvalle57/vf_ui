@@ -5,7 +5,6 @@ import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/rootReducer";
 
@@ -22,24 +21,25 @@ export interface NavigationItem {
 const navigation = [
   { name: 'Agents', href: '' },
   { name: 'Resources', href: 'resource_specifications' },
+  { name: 'Recipes', href: 'recipes' },
 ]
 
-export default function Header(Logo:any) {
+export default function Header(Logo: any) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
 
 
   return (
     <>
-     <Head>
-        <title style={{color: "black"}}>POC Value Flows</title>
+      <Head>
+        <title style={{ color: "black" }}>POC Value Flows</title>
         <link rel="icon" href="/logo.svg" />
       </Head>
       <header className="bg-white">
-        <nav style={{maxWidth: "90%"}} className="mx-auto flex items-center justify-between p-6 lg:px-8" aria-label="Global">
-       
+        <nav style={{ maxWidth: "90%" }} className="mx-auto flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+
           <div>{selectedAgent && selectedAgent.name}</div>
-          
+
           <div className="flex lg:hidden">
             <button
               type="button"
@@ -51,13 +51,20 @@ export default function Header(Logo:any) {
             </button>
           </div>
           <div className="hidden lg:flex lg:gap-x-12">
-            {navigation.map((item) => (
-              <Link 
-                key={item.name} 
-                href={`/${item.href}`} 
-                className="text-sm font-semibold leading-6 text-gray-900">{item.name}</Link>
-            ))}
-            
+            {
+              navigation.map((item) => {
+                if(item.name !== "Agents") {
+                  if(!selectedAgent) return null
+                }
+                return (
+                  <Link
+                    key={item.name}
+                    href={`/${item.href}`}
+                    className="text-sm font-semibold leading-6 text-gray-900">{item.name}</Link>
+                )
+              })
+          }
+
           </div>
         </nav>
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -94,18 +101,18 @@ export default function Header(Logo:any) {
                     </Link>
                   ))}
                 </div>
-               
+
               </div>
             </div>
           </Dialog.Panel>
         </Dialog>
-        
+
       </header>
 
-      
 
 
-      
+
+
     </>
   );
 }

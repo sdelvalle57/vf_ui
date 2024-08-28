@@ -16,7 +16,6 @@ const ResourcesComponent = () => {
     });
 
     const [resourceSpecifications, setResourceSpecifications] = useState<Array<ResourceSpecification>>([]);
-    const [selectedResource, setSelectedResource] = useState<ResourceSpecification | null>(null);
 
 
     useEffect(() => {
@@ -37,13 +36,6 @@ const ResourcesComponent = () => {
         setResourceSpecifications([...resourceSpecifications, resource]);
     };
 
-    const onSelectedResource = (selectedResource: ResourceSpecification) => {
-        setSelectedResource(selectedResource)
-    }
-
-    if(selectedResource) {
-        return <>{selectedResource.name}</>
-    }
 
     return (
         <Box>
@@ -55,7 +47,7 @@ const ResourcesComponent = () => {
 
                 <TabPanels>
                     <TabPanel>
-                        <ResourceSpecificationsTable onSelectedResource={onSelectedResource} resources={resourceSpecifications} />
+                        <ResourceSpecificationsTable resources={resourceSpecifications} />
                     </TabPanel>
                     <TabPanel>
                         <CreateResourceSpecificationForm agent={selectedAgent} onNewResourceSpecification={onNewResourceSpecification} />

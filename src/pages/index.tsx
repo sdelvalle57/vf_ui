@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import AgentComponent from '../components/Agent';
+import AgentComponent from '../components/Agents';
 
 const IndexPage: NextPage = () => {
     return <AgentComponent />
