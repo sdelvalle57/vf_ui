@@ -54,3 +54,21 @@ mutation CreateResourceSpecification(
     unitOfMeasure
   }
 }
+
+# Economic Resources
+query EconomicResourcesBySpecificationId($resourceSpecificationId: Uuid!) {
+  economicResourcesBySpecificationId(resourceSpecificationId: $resourceSpecificationId) {
+    id
+    name
+    resourceSpecificationId
+    note
+    accountingQuantity
+    onHandQuantity
+    trackingIdentifier
+    currentLocation
+    lot
+    containedIn
+    createdAt
+    referenceNumber
+  }
+}

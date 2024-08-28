@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import { Box, Tabs, TabList, TabPanels, Tab, TabPanel, Spinner, Alert, TableContainer, Table, Thead, Tr, Th, Tbody, Td, FormControl, FormLabel, Input, Select, Textarea, Button, useToast } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { ResourceSpecification, useCreateResourceSpecificationMutation, ResourceType, useResourceSpecificationsByAgentQuery, Agent } from '../apollo/__generated__/graphql';
+import { ResourceSpecification, useCreateResourceSpecificationMutation, ResourceType, useResourceSpecificationsByAgentQuery, Agent, useEconomicResourcesBySpecificationIdLazyQuery, EconomicResource } from '../apollo/__generated__/graphql';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/rootReducer';
 
@@ -46,7 +46,7 @@ const ResourceSpecificationsPage: NextPage = () => {
             <ResourceSpecificationsTable resources={resources} />
           </TabPanel>
           <TabPanel>
-            <CreateResourceSpecificationForm agent={selectedAgent}  onNewResourceSpecification={onNewResourceSpecification} />
+            <CreateResourceSpecificationForm agent={selectedAgent} onNewResourceSpecification={onNewResourceSpecification} />
           </TabPanel>
         </TabPanels>
       </Tabs>
@@ -61,6 +61,55 @@ interface ResourceSpecificationsTableProps {
 }
 
 const ResourceSpecificationsTable = ({ resources }: ResourceSpecificationsTableProps) => {
+
+  const [selectedResource, setSelectedResource] = useState<ResourceSpecification | null>(null);
+  const [economicResources, setEconomicResources] = useState<Array<EconomicResource> | null>(null);
+  const [loadingEconomicResources, setLoadingEconomicResources] = useState(false);
+  const [errorEconomicResources, setErrorEconomicResources] = useState<string | null>()
+  const [fetchEconomicResources, { called, loading, data, error }] = useEconomicResourcesBySpecificationIdLazyQuery();
+
+
+  useEffect(() => {
+    const get = async () => {
+      if (selectedResource) {
+        const { data, error, loading } = await fetchEconomicResources({
+          variables: {
+            resourceSpecificationId: selectedResource.id
+          }
+        });
+        if (error) {
+          setLoadingEconomicResources(false)
+          setEconomicResources(null)
+          setErrorEconomicResources(error.message)
+        } else if (loading) {
+          setLoadingEconomicResources(true)
+          setEconomicResources(null)
+          setErrorEconomicResources(null)
+        } else if (data) {
+          setLoadingEconomicResources(false)
+          setEconomicResources(data.economicResourcesBySpecificationId)
+          setErrorEconomicResources(null)
+        }
+      }
+    }
+    get()
+
+  }, [selectedResource])
+
+  if (selectedResource && !loading) return (
+    <EconomicResourceObj 
+      economicResources={economicResources} 
+      error={errorEconomicResources} 
+      resourceSpecification={selectedResource} 
+      onBack={() => {
+        setEconomicResources(null)
+        setErrorEconomicResources(null)
+        setLoadingEconomicResources(false)
+        setSelectedResource(null)
+      }}/>
+  )
+
+
   return (
     <Box maxWidth="80%" textAlign="center" margin="2em auto">
       <TableContainer>
@@ -73,6 +122,7 @@ const ResourceSpecificationsTable = ({ resources }: ResourceSpecificationsTableP
               <Th>Resource Type</Th>
               <Th>Unit of Measure</Th>
               <Th>Created At</Th>
+              <Th>Action</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -84,6 +134,7 @@ const ResourceSpecificationsTable = ({ resources }: ResourceSpecificationsTableP
                 <Td>{resource.resourceType}</Td>
                 <Td>{resource.unitOfMeasure}</Td>
                 <Td>{new Date(resource.createdAt).toLocaleDateString()}</Td>
+                <Td><Button colorScheme='blue' onClick={() => setSelectedResource(resource)}>Economic Resources</Button></Td>
               </Tr>
             ))}
           </Tbody>
@@ -130,7 +181,7 @@ const CreateResourceSpecificationForm: React.FC<CreateResourceSpecificationFormP
     try {
       await createResourceSpecification({
         variables: {
-          agentId: agent.id ,
+          agentId: agent.id,
           name,
           note,
           resourceType,
@@ -151,7 +202,7 @@ const CreateResourceSpecificationForm: React.FC<CreateResourceSpecificationFormP
   return (
     <Box maxWidth="400px" mx="auto" mt="5">
       <form onSubmit={handleSubmit}>
-        
+
         <FormControl id="name" isRequired>
           <FormLabel>Name</FormLabel>
           <Input
@@ -199,3 +250,66 @@ const CreateResourceSpecificationForm: React.FC<CreateResourceSpecificationFormP
     </Box>
   );
 };
+
+
+
+interface EconomicResourceObjProps {
+  resourceSpecification: ResourceSpecification,
+  economicResources: Array<EconomicResource> | null,
+  error: any,
+  onBack: () => void
+}
+
+const EconomicResourceObj: React.FC<EconomicResourceObjProps> = ({ resourceSpecification, economicResources, error, onBack }) => {
+  if (error) return <Alert status='error'>{error}</Alert>
+
+  if (economicResources) {
+    return (
+      <div>
+        <div><Button onClick={onBack}>Back</Button></div>
+        <div>
+          <Box maxWidth="100%" overflowX="auto">
+            <TableContainer>
+              <Table variant="striped" colorScheme="teal">
+                <Thead>
+                  <Tr>
+                    <Th>ID</Th>
+                    <Th>Name</Th>
+                    <Th>Note</Th>
+                    <Th>Accounting Quantity</Th>
+                    <Th>On Hand Quantity</Th>
+                    <Th>Tracking Identifier</Th>
+                    <Th>Current Location</Th>
+                    <Th>Lot</Th>
+                    <Th>Contained In</Th>
+                    <Th>Created At</Th>
+                    <Th>Reference Number</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {economicResources.map((resource) => (
+                    <Tr key={resource.id}>
+                      <Td>{resource.id}</Td>
+                      <Td>{resource.name}</Td>
+                      <Td>{resource.note || 'N/A'}</Td>
+                      <Td>{resource.accountingQuantity}</Td>
+                      <Td>{resource.onHandQuantity}</Td>
+                      <Td>{resource.trackingIdentifier || 'N/A'}</Td>
+                      <Td>{resource.currentLocation || 'N/A'}</Td>
+                      <Td>{resource.lot || 'N/A'}</Td>
+                      <Td>{resource.containedIn || 'N/A'}</Td>
+                      <Td>{new Date(resource.createdAt).toLocaleDateString()}</Td>
+                      <Td>{resource.referenceNumber || 'N/A'}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+}
