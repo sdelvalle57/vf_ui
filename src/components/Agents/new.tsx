@@ -2,11 +2,8 @@ import { useState } from "react";
 import { Agent, useCreateAgentMutation } from "../../apollo/__generated__/graphql";
 import { Box, Button, FormControl, FormLabel, Input, Textarea, useToast } from "@chakra-ui/react";
 
-interface CreateAgentProps {
-    onNewAgent: (agent: Agent) => void,
-}
 
-const CreateAgent = (props: CreateAgentProps) => {
+const CreateAgent = () => {
     const [name, setName] = useState('');
     const [note, setNote] = useState('');
     const toast = useToast();
@@ -20,7 +17,6 @@ const CreateAgent = (props: CreateAgentProps) => {
                 duration: 5000,
                 isClosable: true,
             });
-            props.onNewAgent(data.createAgent);
             setName('');
             setNote('');
         },

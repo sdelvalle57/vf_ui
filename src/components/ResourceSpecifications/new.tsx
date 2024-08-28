@@ -4,10 +4,9 @@ import { Box, Button, FormControl, FormLabel, Input, Select, Textarea, useToast 
 
 interface CreateResourceSpecificationFormProps {
     agent: Agent,
-    onNewResourceSpecification: (resource: ResourceSpecification) => void;
   }
   
-  const CreateResourceSpecificationForm: React.FC<CreateResourceSpecificationFormProps> = ({ onNewResourceSpecification, agent }) => {
+  const CreateResourceSpecificationForm: React.FC<CreateResourceSpecificationFormProps> = ({ agent }) => {
     const [name, setName] = useState('');
     const [note, setNote] = useState('');
     const [resourceType, setResourceType] = useState<ResourceType>(ResourceType.Resource);
@@ -23,7 +22,6 @@ interface CreateResourceSpecificationFormProps {
           duration: 5000,
           isClosable: true,
         });
-        onNewResourceSpecification(data.createResourceSpecification);
         setName('');
         setNote('');
         setResourceType(ResourceType.Resource); // Reset to default

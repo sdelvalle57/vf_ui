@@ -1,15 +1,13 @@
 import { Alert, Box, Button, FormControl, FormLabel, Input, Select, Spinner, Textarea, useToast } from "@chakra-ui/react";
 import { useState } from "react";
-import { useCreateRecipeMutation, RecipeWithResources, useResourceSpecificationsByAgentQuery, ResourceSpecification } from "../../apollo/__generated__/graphql";
+import { useCreateRecipeMutation, useResourceSpecificationsByAgentQuery, ResourceSpecification } from "../../apollo/__generated__/graphql";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import { DeleteIcon } from "@chakra-ui/icons";
 
-interface Props {
-    onNewRecipe: (recipe: RecipeWithResources) => void;
-}
 
-const NewRecipe = ({ onNewRecipe }: Props) => {
+
+const NewRecipe = () => {
     const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
     const { data: reData, loading: reLoading, error: reError } = useResourceSpecificationsByAgentQuery({
         variables: { agentId: selectedAgent?.id || '' },
@@ -30,7 +28,6 @@ const NewRecipe = ({ onNewRecipe }: Props) => {
                 duration: 5000,
                 isClosable: true,
             });
-            onNewRecipe(data.createRecipe);
             setName('');
             setNote('');
             setResourceSpecifications([]);

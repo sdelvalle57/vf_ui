@@ -27,6 +27,7 @@ const RecipesTable = ({ recipes }: RecipesTableProps) => {
                             <Th>Name</Th>
                             <Th>Note</Th>
                             <Th>Created At</Th>
+                            <Th>Resources</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -36,6 +37,7 @@ const RecipesTable = ({ recipes }: RecipesTableProps) => {
                                 <Td>{r.recipe.name}</Td>
                                 <Td>{r.recipe.note}</Td>
                                 <Td>{moment.unix(r.recipe.createdAt).format("DD-MM-YYYY")}</Td>
+                                <Td>{r.resourceSpecifications.length}</Td>
                             </Tr>
                         ))}
                     </Tbody>

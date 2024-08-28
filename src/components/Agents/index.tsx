@@ -6,7 +6,9 @@ import CreateAgent from "./new";
 
 
 const AgentComponent = () => {
-    const { data, loading, error } = useAllAgentsQuery();
+    const { data, loading, error } = useAllAgentsQuery({
+        pollInterval: 5000
+    });
 
     const [agents, setAgents] = useState<Array<Agent>>([]);
 
@@ -21,9 +23,6 @@ const AgentComponent = () => {
     if (!data) return null;
 
 
-    const onNewAgent = (agent: Agent) => {
-        setAgents([...agents, agent]);
-    }
 
     return (
         <div >
@@ -38,7 +37,7 @@ const AgentComponent = () => {
                         <AgentsTable agents={agents} />
                     </TabPanel>
                     <TabPanel>
-                        <CreateAgent onNewAgent={onNewAgent} />
+                        <CreateAgent />
                     </TabPanel>
                 </TabPanels>
             </Tabs>

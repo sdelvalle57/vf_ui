@@ -12,7 +12,8 @@ const ResourcesComponent = () => {
 
     const { data, loading, error } = useResourceSpecificationsByAgentQuery({
         variables: { agentId: selectedAgent?.id || '' },  // Pass empty string or a default value if selectedAgent is null
-        skip: !selectedAgent,  // Skip the query if selectedAgent is null
+        skip: !selectedAgent,
+        pollInterval: 5000  // Skip the query if selectedAgent is null
     });
 
     const [resourceSpecifications, setResourceSpecifications] = useState<Array<ResourceSpecification>>([]);
@@ -32,11 +33,6 @@ const ResourcesComponent = () => {
     if (loading) return <Spinner />;
     if (!data) return null;
 
-    const onNewResourceSpecification = (resource: ResourceSpecification) => {
-        setResourceSpecifications([...resourceSpecifications, resource]);
-    };
-
-
     return (
         <Box>
             <Tabs>
@@ -50,7 +46,7 @@ const ResourcesComponent = () => {
                         <ResourceSpecificationsTable resources={resourceSpecifications} />
                     </TabPanel>
                     <TabPanel>
-                        <CreateResourceSpecificationForm agent={selectedAgent} onNewResourceSpecification={onNewResourceSpecification} />
+                        <CreateResourceSpecificationForm agent={selectedAgent} />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
