@@ -1,24 +1,56 @@
-import { Alert, AlertDescription, Box, Button, CloseButton, FormControl, FormLabel, Textarea, useDisclosure } from "@chakra-ui/react";
+import { Alert, AlertDescription, Box, Button, CloseButton, FormControl, FormLabel, Textarea, useToast } from "@chakra-ui/react";
 import { useState } from "react";
-import { parseJson } from "./types";
+import { parseRecipeFlows, parseJson } from "./parser";
+import { useCreateRecipeTemplateMutation } from "../../apollo/__generated__/graphql";
 
 const NewTemplate = () => {
     // Correct order: [state, setState]
     const [jsonDocument, setJsonDocument] = useState('')
     const [error, setError] = useState<string | null>(null)
+    const toast = useToast();
 
+    const [createRecipeTemplate, { loading }] = useCreateRecipeTemplateMutation({
+        onCompleted: (data) => {
+            console.log(data)
+            toast({
+                title: "Recipe template created.",
+                description: `Recipe ${data.createRecipeTemplate.name} was successfully created.`,
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
+            setJsonDocument('');
+        },
+        onError: (e) => {
+            setError(e.message)
+        }
+    });
 
     const setJsonDocumentValue = (val: string) => {
         setJsonDocument(val);
         setError(null)
     }
 
-    const handleJSON = (event: React.FormEvent) => {
+    const handleJSON = async (event: React.FormEvent) => {
         event.preventDefault();
         // You can handle the JSON document here
+        
         try {
             const doc = parseJson(jsonDocument)
-            console.log(doc)
+            console.log({
+                variables: {
+                    name: doc.name,
+                    recipeTemplateType: doc.type,
+                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events)
+                }
+            })
+            await createRecipeTemplate({
+                variables: {
+                    name: doc.name,
+                    recipeTemplateType: doc.type,
+                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events)
+                },
+            });
         } catch (e: any) {
             setError(e.message)
         }

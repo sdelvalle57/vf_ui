@@ -214,15 +214,6 @@ input RecipeFlowTemplateArgInput {
   data_fields: [RecipeFlowTemplateDataFieldArgInput!]!
 }
 
-type Mutation {
-  createRecipeTemplate(
-    name: String!,
-    recipeTemplateType: RecipeTemplateType!,
-    recipeFlowTemplateArgs: [RecipeFlowTemplateArgInput!]!
-  ): RecipeTemplateWithRecipeFlows
-}
-
-
 
 type RecipeTemplateWithRecipeFlows {
   id: ID!
@@ -248,4 +239,35 @@ type RecipeFlowTemplateDataField {
   required: Boolean!
   query: String
   defaultValue: String
+}
+
+mutation CreateRecipeTemplate(
+  $name: String!,
+  $recipeTemplateType: RecipeTemplateType!,
+  $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!
+) {
+  createRecipeTemplate(
+    name: $name,
+    recipeTemplateType: $recipeTemplateType,
+    recipeFlowTemplateArgs: $recipeFlowTemplateArgs
+  ) {
+  id
+    name
+    recipeTemplateType
+    recipeFlows {
+      id
+      recipeTemplateId
+      eventType 
+      roleType
+      action
+      dataFields {
+        fieldValue
+        field
+        fieldType
+        note
+        required
+        defaultValue
+      }
+    }
+  }
 }
