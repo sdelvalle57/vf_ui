@@ -27,6 +27,23 @@ a {
   cursor: pointer;
 }
 
+.json_file {
+  display: flex;
+  flex-direction: column;
+  min-width: 60%;
+  min-height: 80vh;
+}
+
+.json_file form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.json_file textarea {
+  flex: 1;
+  min-height: 0; /* Necessary for flexbox to respect height constraints */
+}
 
 @tailwind base;
 @tailwind components;

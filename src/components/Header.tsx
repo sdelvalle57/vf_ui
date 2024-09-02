@@ -22,6 +22,7 @@ const navigation = [
   { name: 'Agents', href: '' },
   { name: 'Resources', href: 'resource_specifications' },
   { name: 'Recipes', href: 'recipes' },
+  { name: 'Templates', href: 'templates' },
 ]
 
 export default function Header(Logo: any) {

@@ -196,3 +196,56 @@ mutation CreateRecipe(
 
 
 
+# Recipe Templates
+input RecipeFlowTemplateDataFieldArgInput {
+  field_value: FieldValue!
+  field: String!
+  field_type: FieldType!
+  note: String
+  required: Boolean!
+  query: String
+  default_value: String
+}
+
+input RecipeFlowTemplateArgInput {
+  event_type: EventType!
+  role_type: RoleType!
+  action: ActionType!
+  data_fields: [RecipeFlowTemplateDataFieldArgInput!]!
+}
+
+type Mutation {
+  createRecipeTemplate(
+    name: String!,
+    recipeTemplateType: RecipeTemplateType!,
+    recipeFlowTemplateArgs: [RecipeFlowTemplateArgInput!]!
+  ): RecipeTemplateWithRecipeFlows
+}
+
+
+
+type RecipeTemplateWithRecipeFlows {
+  id: ID!
+  name: String!
+  recipeTemplateType: RecipeTemplateType!
+  recipeFlows: [RecipeFlowTemplateWithDataFields!]!
+}
+
+type RecipeFlowTemplateWithDataFields {
+  id: ID!
+  recipeTemplateId: ID!
+  eventType: EventType!
+  roleType: RoleType!
+  action: ActionType!
+  dataFields: [RecipeFlowTemplateDataField!]!
+}
+
+type RecipeFlowTemplateDataField {
+  fieldValue: FieldValue!
+  field: String!
+  fieldType: FieldType!
+  note: String
+  required: Boolean!
+  query: String
+  defaultValue: String
+}

@@ -18,7 +18,6 @@ export default function Layout(props: PageProps) {
 
   useEffect(() => {
     if (data?.allAgents) {
-      console.log("aca")
       setAgents(data.allAgents);
     }
   }, [data]);

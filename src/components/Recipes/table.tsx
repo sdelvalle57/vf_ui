@@ -48,3 +48,9 @@ const RecipesTable = ({ recipes }: RecipesTableProps) => {
 };
 
 export default RecipesTable
+
+
+/*
+y creeme que conseguir buenos recursos no es facil, 
+
+*/
