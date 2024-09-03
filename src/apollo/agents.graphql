@@ -238,7 +238,6 @@ type RecipeFlowTemplateDataField {
   note: String
   required: Boolean!
   query: String
-  defaultValue: String
 }
 
 mutation CreateRecipeTemplate(
@@ -266,7 +265,6 @@ mutation CreateRecipeTemplate(
         fieldType
         note
         required
-        defaultValue
       }
     }
   }
@@ -289,7 +287,28 @@ query GetTemplates {
         fieldType
         note
         required
-        defaultValue
+      }
+    }
+  }
+}
+
+query GetTemplateById($templateId: Uuid!) {
+  getTemplateById(templateId: $templateId) {
+    id
+    name
+    recipeTemplateType
+    recipeFlows {
+      id
+      recipeTemplateId
+      eventType
+      roleType
+      action
+      dataFields {
+        fieldValue
+        field
+        fieldType
+        note
+        required
       }
     }
   }

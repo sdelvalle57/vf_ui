@@ -11,7 +11,6 @@ interface EventValue {
     "form-required": boolean;
     "regulation-required": boolean;
     "read-only": boolean;
-    "default-value": string | null;
 }
 
 interface Event {
@@ -36,7 +35,6 @@ const eventValueSchema = z.object({
     "form-required": z.boolean(),
     "regulation-required": z.boolean(),
     "read-only": z.boolean(),
-    "default-value": z.string().nullable(),
 });
 
 const eventSchema = z.object({
@@ -77,7 +75,6 @@ export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplate
 const buildDataFields = (values: Array<EventValue>): Array<RecipeFlowTemplateDataFieldArg> => {
     const recipeFlowTemplateDataFieldArgs: Array<RecipeFlowTemplateDataFieldArg> = values.map(v => {
         return {
-            defaultValue: v["default-value"],
             field: v.field,
             fieldType: v.type,
             fieldValue: v.id,

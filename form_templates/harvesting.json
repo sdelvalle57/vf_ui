@@ -1,0 +1,58 @@
+{
+    "type": "FDA",
+    "name": "Harvesting",
+    "events": [
+        {
+            "type": "ECONOMIC_EVENT",
+            "action": "PRODUCE",
+            "role": "OUTPUT",
+            "values": [
+                {
+                    "id": "PRODUCT",
+                    "field": "Product",
+                    "type": "SELECT",
+                    "description": "Product being harvested, linked to commodity and variety",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "QUANTITY",
+                    "field": "Quantity",
+                    "type": "NUMBER",
+                    "description": "Quantity of food harvested",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "AT_LOCATION",
+                    "field": "Harvest Location",
+                    "type": "SELECT",
+                    "description": "Name of the location where the food was harvested",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME",
+                    "field": "Harvest Date",
+                    "type": "DATE",
+                    "description": "Date when the food was harvested",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "NOTE",
+                    "field": "Notes",
+                    "type": "TEXT",
+                    "description": "Process notes",
+                    "form-required": false,
+                    "regulation-required": false,
+                    "read-only": false
+                }
+            ]
+        }
+    ]
+}

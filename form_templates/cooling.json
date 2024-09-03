@@ -1,0 +1,101 @@
+{
+    "type": "FDA",
+    "name": "Cooling",
+    "events": [
+        {
+            "type": "ECONOMIC_EVENT",
+            "action": "USE",
+            "role": "INPUT",
+            "values": [
+                {
+                    "id": "PRODUCT",
+                    "field": "Product",
+                    "type": "SELECT",
+                    "description": "Product being cooled, linked to commodity and variety",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "QUANTITY",
+                    "field": "Quantity",
+                    "type": "NUMBER",
+                    "description": "Quantity of food cooled",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "AT_LOCATION",
+                    "field": "Cooling Location",
+                    "type": "SELECT",
+                    "description": "Name of the location where the food is cooled",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME",
+                    "field": "Cooling Date Entry",
+                    "type": "DATE",
+                    "description": "Date when the food entered cooling station",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "NOTE",
+                    "field": "Notes",
+                    "type": "TEXT",
+                    "description": "Process notes",
+                    "form-required": false,
+                    "regulation-required": false,
+                    "read-only": false
+                }
+            ]
+        },
+        {
+            "type": "ECONOMIC_EVENT",
+            "action": "MODIFY",
+            "role": "OUTPUT",
+            "values": [
+                {
+                    "id": "PRODUCT",
+                    "field": "Product",
+                    "type": "SELECT",
+                    "description": "Product being cooled, linked to commodity and variety",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "QUANTITY",
+                    "field": "Quantity",
+                    "type": "NUMBER",
+                    "description": "Quantity of food cooled",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME",
+                    "field": "Harvest Date Exit",
+                    "type": "DATE",
+                    "description": "Date when the food exited cooling",
+                    "form-required": true,
+                    "regulation-required": true,
+                    "read-only": false
+                },
+                {
+                    "id": "NOTE",
+                    "field": "Notes",
+                    "type": "TEXT",
+                    "description": "Process notes",
+                    "form-required": false,
+                    "regulation-required": false,
+                    "read-only": false
+                }
+            ]
+        }
+    ]
+}
