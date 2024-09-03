@@ -313,3 +313,35 @@ query GetTemplateById($templateId: Uuid!) {
     }
   }
 }
+
+
+# Recipe Template Access
+query GetTemplatesAccessByAgent($agentId: Uuid!) {
+  getTemplatesAccessByAgent(agentId: $agentId) {
+    id
+    name
+    recipeTemplateType
+    recipeFlows {
+      id
+      recipeTemplateId
+      eventType
+      roleType
+      action
+      dataFields {
+        fieldValue
+        field
+        fieldType
+        note
+        required
+      }
+    }
+  }
+}
+
+mutation AssignTemplateToAgent($agentId: Uuid!, $recipeTemplateId: Uuid!) {
+  assignTemplateToAgent(agentId: $agentId, recipeTemplateId: $recipeTemplateId) {
+    id
+    agentId
+    recipeTemplateId
+  }
+}
