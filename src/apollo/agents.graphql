@@ -271,3 +271,26 @@ mutation CreateRecipeTemplate(
     }
   }
 }
+
+query GetTemplates {
+  getTemplates {
+    id
+    name
+    recipeTemplateType
+    recipeFlows {
+      id
+      recipeTemplateId
+      eventType
+      roleType
+      action
+      dataFields {
+        fieldValue
+        field
+        fieldType
+        note
+        required
+        defaultValue
+      }
+    }
+  }
+}

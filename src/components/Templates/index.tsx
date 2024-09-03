@@ -1,31 +1,30 @@
 import { Alert,  Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { RecipeWithResources, useRecipesByAgentQuery } from "../../apollo/__generated__/graphql"
+import { RecipeTemplateWithRecipeFlows, RecipeWithResources, useGetTemplatesQuery, useRecipesByAgentQuery } from "../../apollo/__generated__/graphql"
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 import NewTemplate from "./new";
+import RecipeTemplatesTable from "./table";
 
 
-const RecipesComponent = () => {
+const RecipeTemplatesComponent = () => {
     // const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
     
-    // const { loading, data, error } = useRecipesByAgentQuery({
-    //     variables: { agentId: selectedAgent?.id || '' },  // Pass empty string or a default value if selectedAgent is null
-    //     skip: !selectedAgent,
-    //     pollInterval: 5000  // Skip the query if selectedAgent is null
-    // });
+    const { loading, data, error } = useGetTemplatesQuery({
+        pollInterval: 5000
+    })
+    
+    const [recipeTemplates, setRecipeTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([]);
 
-    // const [recipes, setRecipes] = useState<Array<RecipeWithResources>>([]);
+    useEffect(() => {
+        if(data?.getTemplates) {
+            setRecipeTemplates(data.getTemplates)
+        }
+    }, [data?.getTemplates])
 
-    // useEffect(() => {
-    //     if(data?.recipesByAgent) {
-    //         setRecipes(data.recipesByAgent)
-    //     }
-    // }, [data?.recipesByAgent])
-
-    // if (error) return <Alert status='error'>{error.message}</Alert>
-    // if (loading) return <Spinner />
-    // if(data) {
+    if (error) return <Alert status='error'>{error.message}</Alert>
+    if (loading) return <Spinner />
+    if(data) {
         return (
             <div >
 
@@ -36,14 +35,13 @@ const RecipesComponent = () => {
                     </TabList>
     
                     <TabPanels>
-                        <TabPanel>
-                        </TabPanel>
+                        <TabPanel><RecipeTemplatesTable recipes={recipeTemplates} /></TabPanel>
                         <TabPanel><NewTemplate /></TabPanel>
                     </TabPanels>
                 </Tabs>
             </div>
         )
-    // }
+    }
     return null;
 }
-export default RecipesComponent
+export default RecipeTemplatesComponent
