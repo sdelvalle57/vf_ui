@@ -42,7 +42,33 @@ a {
 
 .json_file textarea {
   flex: 1;
-  min-height: 0; /* Necessary for flexbox to respect height constraints */
+  min-height: 0;
+  /* Necessary for flexbox to respect height constraints */
+}
+
+.new_process_card {
+  width: 9em;
+  margin: 1em;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+#chakra-modal--body-sel_template, .sel_template {
+  display: inline-flex;
+}
+
+#chakra-modal-view_process_modal {
+  max-width: 40%;
+}
+
+.fields {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  border-color: rgb(26, 32, 44);
+  border-style: solid;
+  box-sizing: border-box;
+  margin: 16px;
+  padding: 20px;
 }
 
 @tailwind base;

@@ -260,6 +260,7 @@ mutation CreateRecipeTemplate(
       roleType
       action
       dataFields {
+        id
         fieldValue
         field
         fieldType
@@ -282,6 +283,7 @@ query GetTemplates {
       roleType
       action
       dataFields {
+        id
         fieldValue
         field
         fieldType
@@ -304,6 +306,7 @@ query GetTemplateById($templateId: Uuid!) {
       roleType
       action
       dataFields {
+        id
         fieldValue
         field
         fieldType
@@ -328,6 +331,7 @@ query GetTemplatesAccessByAgent($agentId: Uuid!) {
       roleType
       action
       dataFields {
+        id
         fieldValue
         field
         fieldType
@@ -343,5 +347,25 @@ mutation AssignTemplateToAgent($agentId: Uuid!, $recipeTemplateId: Uuid!) {
     id
     agentId
     recipeTemplateId
+  }
+}
+
+
+# Locations
+query LocationsByAgent($agentId: Uuid!) {
+  locationsByAgent(agentId: $agentId) {
+    id
+    agentId
+    name
+    value
+  }
+}
+
+mutation CreateLocation($agentId: Uuid!, $name: String!, $value: String!) {
+  createLocation(agentId: $agentId, name: $name, value: $value) {
+    id
+    agentId
+    name
+    value
   }
 }

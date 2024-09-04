@@ -1,8 +1,6 @@
 import { Alert,  Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { RecipeTemplateWithRecipeFlows, RecipeWithResources, useGetTemplatesQuery, useRecipesByAgentQuery } from "../../apollo/__generated__/graphql"
+import { RecipeTemplateWithRecipeFlows, useGetTemplatesQuery } from "../../apollo/__generated__/graphql"
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/rootReducer";
 import NewTemplate from "./new";
 import RecipeTemplatesTable from "./table";
 
@@ -11,7 +9,7 @@ const RecipeTemplatesComponent = () => {
     // const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
     
     const { loading, data, error } = useGetTemplatesQuery({
-        pollInterval: 5000
+        pollInterval: 5000  
     })
     
     const [recipeTemplates, setRecipeTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([]);
