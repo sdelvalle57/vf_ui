@@ -1,6 +1,6 @@
 {
     "type": "FDA",
-    "name": "Cooling",
+    "name": "Inital Packing",
     "events": [
         {
             "type": "ECONOMIC_EVENT",
@@ -12,7 +12,7 @@
                     "class": "PRODUCT",
                     "field": "Product",
                     "type": "SELECT",
-                    "description": "Product being cooled, linked to commodity and variety",
+                    "description": "Product being packed, linked to commodity and variety",
                     "form-required": true
                 },
                 {
@@ -20,27 +20,25 @@
                     "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
-                    "description": "Quantity of food being cooled",
+                    "description": "Quantity of food being packed",
                     "form-required": true
                 },
                 {
                     "id": "AT_LOCATION_1",
                     "class": "AT_LOCATION",
-                    "field": "Cooling Location",
+                    "field": "Packing Location",
                     "type": "SELECT",
-                    "description": "Name of the location where the food is cooled",
-                    "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "description": "Name of the location where the is packed",
+                    "form-required": true
 
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
                     "class": "HAS_POINT_IN_TIME",
-                    "field": "Cooling Date Entry",
+                    "field": "Packing Date",
                     "type": "DATE",
-                    "description": "Date when the food entered cooling station",
-                    "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "description": "Date when the food got packed",
+                    "form-required": true
                 },
                 {
                     "id": "NOTE_1",
@@ -58,23 +56,23 @@
             "role": "OUTPUT",
             "values": [
                 {
-                    "id": "PRODUCT_2",
+                    "id": "PRODUCT_1",
                     "class": "PRODUCT",
                     "field": "Product",
                     "type": "SELECT",
-                    "description": "Product being cooled, linked to commodity and variety",
+                    "description": "Product packed, linked to commodity and variety",
                     "form-required": true
                 },
                 {
-                    "id": "QUANTITY_2",
+                    "id": "QUANTITY_1",
                     "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
-                    "description": "Quantity of food cooled",
+                    "description": "Quantity of food packed",
                     "form-required": true
                 },
                 {
-                    "id": "NOTE_2",
+                    "id": "NOTE_1",
                     "class": "NOTE",
                     "field": "Notes",
                     "type": "TEXT",
@@ -82,12 +80,12 @@
                     "form-required": false
                 },
                 {
-                    "id": "CUSTOM_1",
-                    "class": "CUSTOM",
-                    "field": "Temperature",
+                    "id": "TRACKING_IDENTIFIER_1",
+                    "class": "TRACKING_IDENTIFIER",
+                    "field": "Lot Code",
                     "type": "TEXT",
-                    "description": "Average Temperature",
-                    "form-required": false
+                    "description": "Assigned Traceability Lot Code",
+                    "form-required": true
                 }
             ]
         }

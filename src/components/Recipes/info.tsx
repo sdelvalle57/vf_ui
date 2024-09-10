@@ -2,7 +2,7 @@ import { Box, Card, CardBody, Heading, Stack, Tab, TabList, TabPanel, TabPanels,
 import { RecipeWithResources } from "../../apollo/__generated__/graphql"
 import moment from "moment"
 import RecipeResourcesTable from "./resources_table"
-import { ProcessesInfo } from "../Process/processes_info"
+import { RecipeProcessEditor } from "../RecipeProcess/processes_editor"
 
 interface Props {
     recipe: RecipeWithResources
@@ -25,12 +25,14 @@ const RecipeInfo = ({ recipe }: Props) => {
             <Tabs style={{maxWidth: "80%", margin: "2em auto"}}>
                 <TabList>
                     <Tab>Resources</Tab>
+                    <Tab>Process Editor</Tab>
                     <Tab>Processes</Tab>
                 </TabList>
 
                 <TabPanels>
                     <TabPanel><RecipeResourcesTable recipe={recipe} /></TabPanel>
-                    <TabPanel><ProcessesInfo recipe={recipe}/></TabPanel>
+                    <TabPanel><RecipeProcessEditor recipe={recipe}/></TabPanel>
+                    <TabPanel></TabPanel>
                 </TabPanels>
             </Tabs>
         </Box>

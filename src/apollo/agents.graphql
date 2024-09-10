@@ -198,7 +198,7 @@ mutation CreateRecipe(
 
 # Recipe Templates
 input RecipeFlowTemplateDataFieldArgInput {
-  field_value: FieldValue!
+  field_class: FieldClass!
   field: String!
   field_type: FieldType!
   note: String
@@ -207,11 +207,19 @@ input RecipeFlowTemplateDataFieldArgInput {
   default_value: String
 }
 
+# Recipe Template Form Required Fields
+input RecipeFLowRequiredFieldArgInput {
+  from: String!,
+  role: RoleType!,
+  field: FieldClass!
+}
+
 input RecipeFlowTemplateArgInput {
   event_type: EventType!
   role_type: RoleType!
   action: ActionType!
   data_fields: [RecipeFlowTemplateDataFieldArgInput!]!
+  recipe_flow_required_inputs: [RecipeFLowRequiredFieldArgInput]!
 }
 
 
@@ -232,7 +240,8 @@ type RecipeFlowTemplateWithDataFields {
 }
 
 type RecipeFlowTemplateDataField {
-  fieldValue: FieldValue!
+  fieldIdentifier: String!
+  fieldClass: FieldClass!
   field: String!
   fieldType: FieldType!
   note: String
@@ -261,11 +270,12 @@ mutation CreateRecipeTemplate(
       action
       dataFields {
         id
-        fieldValue
+        fieldClass
         field
         fieldType
         note
         required
+        fieldIdentifier
       }
     }
   }
@@ -284,11 +294,12 @@ query GetTemplates {
       action
       dataFields {
         id
-        fieldValue
+        fieldClass
         field
         fieldType
         note
         required
+        fieldIdentifier
       }
     }
   }
@@ -307,11 +318,12 @@ query GetTemplateById($templateId: Uuid!) {
       action
       dataFields {
         id
-        fieldValue
+        fieldClass
         field
         fieldType
         note
         required
+        fieldIdentifier
       }
     }
   }
@@ -332,11 +344,12 @@ query GetTemplatesAccessByAgent($agentId: Uuid!) {
       action
       dataFields {
         id
-        fieldValue
+        fieldClass
         field
         fieldType
         note
         required
+        fieldIdentifier
       }
     }
   }
@@ -367,5 +380,43 @@ mutation CreateLocation($agentId: Uuid!, $name: String!, $value: String!) {
     agentId
     name
     value
+  }
+}
+
+
+# Create recipe processes
+mutation CreateRecipeProcesses($recipeId: Uuid!, $data: [RecipeProcessWithRelation!]!) {
+  createRecipeProcesses(recipeId: $recipeId, data: $data) {
+    recipe {
+      id
+      agentId
+      name
+      note
+      createdAt
+    }
+    recipeProcesses {
+      id
+      name
+      recipeType
+      outputOf
+      processFlows {
+        id
+        eventType
+        roleType
+        action
+        dataFields {
+          recipeProcessFlowId
+          recipeFlowTemplateDataFieldId
+          fieldIdentifier
+          fieldClass
+          field
+          fieldType
+          note
+          required
+          defaultValue
+          flowThrough
+        }
+      }
+    }
   }
 }

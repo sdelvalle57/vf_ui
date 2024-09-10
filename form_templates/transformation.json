@@ -1,10 +1,10 @@
 {
     "type": "FDA",
-    "name": "Cooling",
+    "name": "Transformation",
     "events": [
         {
             "type": "ECONOMIC_EVENT",
-            "action": "ACCEPT",
+            "action": "CONSUME",
             "role": "INPUT",
             "values": [
                 {
@@ -12,7 +12,7 @@
                     "class": "PRODUCT",
                     "field": "Product",
                     "type": "SELECT",
-                    "description": "Product being cooled, linked to commodity and variety",
+                    "description": "Product being transformed, linked to commodity and variety",
                     "form-required": true
                 },
                 {
@@ -20,27 +20,17 @@
                     "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
-                    "description": "Quantity of food being cooled",
+                    "description": "Quantity of food being transformed",
                     "form-required": true
                 },
                 {
                     "id": "AT_LOCATION_1",
                     "class": "AT_LOCATION",
-                    "field": "Cooling Location",
+                    "field": "Transform Location",
                     "type": "SELECT",
-                    "description": "Name of the location where the food is cooled",
-                    "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "description": "Name of the location where the food is transformed",
+                    "form-required": true
 
-                },
-                {
-                    "id": "HAS_POINT_IN_TIME_1",
-                    "class": "HAS_POINT_IN_TIME",
-                    "field": "Cooling Date Entry",
-                    "type": "DATE",
-                    "description": "Date when the food entered cooling station",
-                    "form-required": true,
-                    "flow-through": "EXTERNAL"
                 },
                 {
                     "id": "NOTE_1",
@@ -54,7 +44,7 @@
         },
         {
             "type": "ECONOMIC_EVENT",
-            "action": "MODIFY",
+            "action": "PRODUCE",
             "role": "OUTPUT",
             "values": [
                 {
@@ -62,7 +52,7 @@
                     "class": "PRODUCT",
                     "field": "Product",
                     "type": "SELECT",
-                    "description": "Product being cooled, linked to commodity and variety",
+                    "description": "Product produced, linked to commodity and variety",
                     "form-required": true
                 },
                 {
@@ -70,7 +60,15 @@
                     "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
-                    "description": "Quantity of food cooled",
+                    "description": "Quantity of food produced",
+                    "form-required": true
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME_2",
+                    "class": "HAS_POINT_IN_TIME",
+                    "field": "Harvest Date",
+                    "type": "DATE",
+                    "description": "Date when the food was harvested",
                     "form-required": true
                 },
                 {
@@ -82,12 +80,12 @@
                     "form-required": false
                 },
                 {
-                    "id": "CUSTOM_1",
-                    "class": "CUSTOM",
-                    "field": "Temperature",
+                    "id": "TRACKING_IDENTIFIER_2",
+                    "class": "TRACKING_IDENTIFIER",
+                    "field": "Lot Code",
                     "type": "TEXT",
-                    "description": "Average Temperature",
-                    "form-required": false
+                    "description": "Assigned Traceability Lot Code",
+                    "form-required": true
                 }
             ]
         }

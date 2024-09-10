@@ -8,49 +8,56 @@
             "role": "OUTPUT",
             "values": [
                 {
-                    "id": "PRODUCT",
+                    "id": "PRODUCT_1",
+                    "class": "PRODUCT",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being harvested, linked to commodity and variety",
                     "form-required": true,
-                    "regulation-required": true,
-                    "read-only": false
+                    "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "QUANTITY",
+                    "id": "QUANTITY_1",
+                    "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food harvested",
                     "form-required": true,
-                    "regulation-required": true,
-                    "read-only": false
+                    "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "AT_LOCATION",
+                    "id": "AT_LOCATION_1",
+                    "class": "AT_LOCATION",
                     "field": "Harvest Location",
                     "type": "SELECT",
                     "description": "Name of the location where the food was harvested",
                     "form-required": true,
-                    "regulation-required": true,
-                    "read-only": false
+                    "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "HAS_POINT_IN_TIME",
+                    "id": "AT_LOCATION_2",
+                    "class": "AT_LOCATION",
+                    "field": "Location immediate subsequent receiver",
+                    "type": "SELECT",
+                    "description": "Name of the location where the food was harvested",
+                    "form-required": true
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME_1",
+                    "class": "HAS_POINT_IN_TIME",
                     "field": "Harvest Date",
                     "type": "DATE",
                     "description": "Date when the food was harvested",
                     "form-required": true,
-                    "regulation-required": true,
-                    "read-only": false
+                    "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "NOTE",
+                    "id": "NOTE_1",
+                    "class": "NOTE",
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false,
-                    "regulation-required": false,
-                    "read-only": false
+                    "form-required": false
                 }
             ]
         }

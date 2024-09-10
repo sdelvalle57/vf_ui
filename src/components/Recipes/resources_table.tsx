@@ -11,6 +11,7 @@ interface EconomicResourcesProps {
 const RecipeResourcesTable = (props: EconomicResourcesProps) => {
 
     const { recipe} = props
+    console.log(recipe)
 
     return (
         <Box maxWidth="100%" overflowX="auto">
@@ -20,8 +21,8 @@ const RecipeResourcesTable = (props: EconomicResourcesProps) => {
                             <Tr>
                                 <Th>ID</Th>
                                 <Th>Name</Th>
-                                <Th>Note</Th>
                                 <Th>Resource Type</Th>
+                                <Th>Note</Th>
                                 <Th>Created At</Th>
                             </Tr>
                         </Thead>

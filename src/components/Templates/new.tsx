@@ -9,7 +9,7 @@ const NewTemplate = () => {
     const [error, setError] = useState<string | null>(null)
     const toast = useToast();
 
-    const [createRecipeTemplate, { loading }] = useCreateRecipeTemplateMutation({
+    const [createRecipeTemplate, { loading, error: createError }] = useCreateRecipeTemplateMutation({
         onCompleted: (data) => {
             console.log(data)
             toast({
@@ -22,9 +22,12 @@ const NewTemplate = () => {
             setJsonDocument('');
         },
         onError: (e) => {
+            console.log(e)
             setError(e.message)
         }
     });
+
+    console.log(createError)
 
     const setJsonDocumentValue = (val: string) => {
         setJsonDocument(val);
@@ -37,18 +40,19 @@ const NewTemplate = () => {
         
         try {
             const doc = parseJson(jsonDocument)
+            
             console.log({
                 variables: {
                     name: doc.name,
                     recipeTemplateType: doc.type,
-                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events)
+                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
                 }
             })
             await createRecipeTemplate({
                 variables: {
                     name: doc.name,
                     recipeTemplateType: doc.type,
-                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events)
+                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
                 },
             });
         } catch (e: any) {

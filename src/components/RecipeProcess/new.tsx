@@ -1,30 +1,35 @@
 import { useEffect, useState } from "react";
-import { RecipeTemplateWithRecipeFlows, useGetTemplatesQuery } from "../../apollo/__generated__/graphql";
+import { RecipeTemplateWithRecipeFlows, useGetTemplatesAccessByAgentQuery, useGetTemplatesQuery } from "../../apollo/__generated__/graphql";
 import { Alert, Button, Card, CardBody, Heading, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text } from "@chakra-ui/react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/rootReducer";
 
 
 interface Props {
     isOpen: boolean,
     onClose: () => void,
-    onAddTemplate: (template: RecipeTemplateWithRecipeFlows) => void
+    onAddProcess: (template: RecipeTemplateWithRecipeFlows) => void
 }
 
-const NewProcessComponent = ({ isOpen, onClose, onAddTemplate }: Props) => {
+const NewProcessComponent = ({ isOpen, onClose, onAddProcess }: Props) => {
 
-    const { loading, data, error } = useGetTemplatesQuery({
+    const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
+    const { loading, data, error } = useGetTemplatesAccessByAgentQuery({
+        variables: { agentId: selectedAgent?.id || '' },
+        skip: !selectedAgent,
         pollInterval: 5000
     })
 
     const [recipeTemplates, setRecipeTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([]);
 
     useEffect(() => {
-        if (data?.getTemplates) {
-            setRecipeTemplates(data.getTemplates)
+        if (data?.getTemplatesAccessByAgent) {
+            setRecipeTemplates(data.getTemplatesAccessByAgent)
         }
-    }, [data?.getTemplates])
+    }, [data?.getTemplatesAccessByAgent])
 
     const addTemplate = (template: RecipeTemplateWithRecipeFlows) => {
-        onAddTemplate(template);
+        onAddProcess(template);
         onClose()
     }
 
