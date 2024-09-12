@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActionType, DefaultValue, FieldClass, FieldType, Location, RecipeFlowDataFieldInput, RecipeFlowTemplateDataFieldInput, RecipeProcessWithRelation, RecipeWithResources, RoleType, useLocationsByAgentQuery } from "../../apollo/__generated__/graphql";
+import { ActionType, FieldClass, FieldType, Location, RecipeFlowDataFieldInput, RecipeFlowTemplateDataFieldInput, RecipeFlowWithDataFields, RecipeProcessWithRelation, RecipeWithRecipeFlows, RecipeWithResources, RoleType, useLocationsByAgentQuery } from "../../apollo/__generated__/graphql";
 import { Alert, Box, Button, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
@@ -19,7 +19,6 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
 
     const [editedProcess, setEditedProcess] = useState<RecipeProcessWithRelation | null>(process)
     const [locations, setLocations] = useState<Array<Location>>([]);
-    const [defaultValues, setDefaultValues] = useState<Array<DefaultValue>>([])
 
     const { loading, data, error } = useLocationsByAgentQuery({
         variables: { agentId: selectedAgent?.id || '' },  // Pass empty string or a default value if selectedAgent is null
@@ -38,23 +37,66 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         if (process) setEditedProcess(process)
     }, [process])
 
-    const handleChange = (fieldId: string, defaultValue: string) => {
-        setDefaultValues((defValues) => {
-            const newDefValues = defValues.filter(d => d.fieldId !== fieldId);
-            newDefValues.push({
-                fieldId,
-                value: defaultValue
-            })
-            return newDefValues
-        })
-    }
+    const handleChange = (
+        rf: RecipeFlowWithDataFields,
+        data_field: RecipeFlowDataFieldInput,
+        defaultValue: string
+      ) => {
+        console.log(defaultValue)
+        if (editedProcess) {
+          // Update the data fields of the recipe flow
+          const updatedDataFields = rf.dataFields.map((df) => {
+            if (df.id === data_field.id) {
+              // Return a new object with the updated defaultValue
+              return {
+                ...df,
+                defaultValue: defaultValue, // Update the defaultValue
+              };
+            }
+            return df; // Keep the other fields unchanged
+          });
+      
+          // Create a new object for rf with the updated data fields
+          const updatedRecipeFlow: RecipeFlowWithDataFields = {
+            ...rf,
+            dataFields: updatedDataFields,
+          };
+      
+          // Update the recipe flows in the recipe process
+          const updatedRecipeFlows = editedProcess.recipeProcess.recipeFlows.map(
+            (flow) => {
+              if (flow.id === updatedRecipeFlow.id) {
+                // Replace the old flow with the updated flow
+                return updatedRecipeFlow;
+              }
+              return flow; // Keep the other flows unchanged
+            }
+          );
+      
+          // Create a new recipeProcess object with the updated recipeFlows
+          const updatedRecipeProcess: RecipeWithRecipeFlows = {
+            ...editedProcess.recipeProcess,
+            recipeFlows: updatedRecipeFlows,
+          };
+      
+          // Create a new editedProcess object and update the state
+          const updatedProcess: RecipeProcessWithRelation = {
+            ...editedProcess,
+            recipeProcess: updatedRecipeProcess,
+          };
+      
+          // Update the state to trigger a re-render
+          setEditedProcess(updatedProcess);
+        }
+      };
+      
 
     const onSave = (t: RecipeProcessWithRelation) => {
-        t.defaultValues = defaultValues;
+        console.log(t)
         onEditedProcess(t)
     }
 
-    const renderSelectComponent = (f: RecipeFlowDataFieldInput, hideProduct?: boolean) => {
+    const renderSelectComponent = (f: RecipeFlowDataFieldInput, rf: RecipeFlowWithDataFields, hideProduct?: boolean) => {
         const required = f.required ? "*" : ""
         if (f.fieldClass === FieldClass.Product && !hideProduct) {
             const recipeProducts = recipe.resourceSpecifications;
@@ -62,7 +104,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                 <Box key={f.id} className="fields">
                     <Heading size={"md"}>{`${f.field} ${required}`}</Heading>
                     <Text size={"sm"}>{f.note}</Text>
-                    <Select onChange={({ target }) => handleChange(f.id, target.value)} style={{ maxWidth: "20em" }} key={f.id}
+                    <Select onChange={({ target }) => handleChange(rf, f, target.value)} style={{ maxWidth: "20em" }} key={f.id}
                         placeholder="Default Value">
                         {
                             recipeProducts.map(p => {
@@ -79,7 +121,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                     <Text size={"sm"}>{f.note}</Text>
                     {
                         locations ? (
-                            <Select onChange={({ target }) => handleChange(f.id, target.value)} style={{ maxWidth: "20em" }} key={f.id}
+                            <Select onChange={({ target }) => handleChange(rf, f, target.value)} style={{ maxWidth: "20em" }} key={f.id}
                                 placeholder="Default Value">
                                 {
                                     locations.map(p => {
@@ -95,15 +137,15 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         return null;
     }
 
-    const renderInputComponent = (f: RecipeFlowDataFieldInput) => {
+    const renderInputComponent = (f: RecipeFlowDataFieldInput, rf: RecipeFlowWithDataFields) => {
         const required = f.required ? "*" : "";
-        if(f.fieldClass === FieldClass.TrackingIdentifier) return null;
+        if (f.fieldClass === FieldClass.TrackingIdentifier) return null;
         return (
             <Box key={f.id} className="fields">
                 <Heading size={"md"}>{`${f.field} ${required}`}</Heading>
                 <Text size={"sm"}>{f.note}</Text>
                 <Input
-                    onChange={({ target }) => handleChange(f.id, target.value)}
+                    onChange={({ target }) => handleChange(rf, f.id, target.value)}
                     placeholder="Default Value"
                     type={f.fieldType.toLowerCase()}>
                 </Input>
@@ -111,12 +153,12 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         )
     }
 
-    const renderFields = (df: Array<RecipeFlowDataFieldInput>, hideProduct?: boolean) => {
-        return df.map((f) => {
-            if (f.fieldType === FieldType.Select) return renderSelectComponent(f, hideProduct)
-            else if (f.fieldType === FieldType.Number) return renderInputComponent(f)
-            else if (f.fieldType === FieldType.Date) return renderInputComponent(f)
-            else if (f.fieldType === FieldType.Text) return renderInputComponent(f)
+    const renderFields = (rf: RecipeFlowWithDataFields, hideProduct?: boolean) => {
+        return rf.dataFields.map((f) => {
+            if (f.fieldType === FieldType.Select) return renderSelectComponent(f, rf, hideProduct)
+            else if (f.fieldType === FieldType.Number) return renderInputComponent(f, rf)
+            else if (f.fieldType === FieldType.Date) return renderInputComponent(f, rf)
+            else if (f.fieldType === FieldType.Text) return renderInputComponent(f, rf)
             return null
         })
     }
@@ -126,7 +168,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         return t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Input).map(rf => {
             return (
                 <div key={rf.id}>
-                    {renderFields(rf.dataFields)}
+                    {renderFields(rf)}
                 </div>
             )
         })
@@ -139,7 +181,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
             if (rf.action === ActionType.Modify) hideProduct = true;
             return (
                 <div key={rf.id}>
-                    {renderFields(rf.dataFields, hideProduct)}
+                    {renderFields(rf, hideProduct)}
                 </div>
             )
         })

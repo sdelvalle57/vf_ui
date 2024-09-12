@@ -383,6 +383,50 @@ mutation CreateLocation($agentId: Uuid!, $name: String!, $value: String!) {
   }
 }
 
+# Get recipe processes
+query GetRecipeProcesses($recipeId: Uuid!) {
+  getRecipeProcesses(recipeId: $recipeId) {
+    recipe {
+      id
+      agentId
+      name
+      note
+      createdAt
+    }
+    resources {
+      id
+      name
+      note
+      resourceType
+      unitOfMeasure
+    }
+    recipeProcesses {
+      id
+      name
+      recipeType
+      outputOf
+      processFlows {
+        id
+        eventType
+        roleType
+        action
+        dataFields {
+          recipeProcessFlowId
+          recipeFlowTemplateDataFieldId
+          fieldIdentifier
+          fieldClass
+          field
+          fieldType
+          note
+          required
+          defaultValue
+          flowThrough
+        }
+      }
+    }
+  }
+}
+
 
 # Create recipe processes
 mutation CreateRecipeProcesses($recipeId: Uuid!, $data: [RecipeProcessWithRelation!]!) {

@@ -3,6 +3,7 @@ import { RecipeWithResources } from "../../apollo/__generated__/graphql"
 import moment from "moment"
 import RecipeResourcesTable from "./resources_table"
 import { RecipeProcessEditor } from "../RecipeProcess/processes_editor"
+import ViewProcesses from "../RecipeProcess/view"
 
 interface Props {
     recipe: RecipeWithResources
@@ -32,7 +33,7 @@ const RecipeInfo = ({ recipe }: Props) => {
                 <TabPanels>
                     <TabPanel><RecipeResourcesTable recipe={recipe} /></TabPanel>
                     <TabPanel><RecipeProcessEditor recipe={recipe}/></TabPanel>
-                    <TabPanel></TabPanel>
+                    <TabPanel><ViewProcesses  recipeId={recipe.recipe.id}/></TabPanel>
                 </TabPanels>
             </Tabs>
         </Box>
