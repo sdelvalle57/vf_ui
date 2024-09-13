@@ -16,7 +16,8 @@ const ViewProcesses = ({ recipeId }: Props) => {
     const { loading, data, error } = useGetRecipeProcessesQuery({
         variables: {
             recipeId
-        }
+        },
+        pollInterval: 5000
     })
 
     const onShowProcess = (p: RecipeProcessResponse) => {

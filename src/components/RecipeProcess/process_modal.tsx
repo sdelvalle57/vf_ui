@@ -39,8 +39,7 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
                 <Box key={df.id} className="fields">
                     <Heading size={"md"}>{`${df.field} ${required}`}</Heading>
                     <Text size={"sm"}>{df.note}</Text>
-                    <Select style={{ maxWidth: "20em" }} key={df.id}
-                        placeholder="Default Value">
+                    <Select style={{ maxWidth: "20em" }} key={df.id}>
                         {
                             resources.map(p => {
                                 return <option key={p.id} value={p.id}>{p.name}</option>
@@ -56,8 +55,7 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
                     <Text size={"sm"}>{df.note}</Text>
                     {
                         locations ? (
-                            <Select style={{ maxWidth: "20em" }} key={df.id}
-                                placeholder="Default Value">
+                            <Select style={{ maxWidth: "20em" }} key={df.id}>
                                 {
                                     locations.map(p => {
                                         return <option key={p.id} value={p.id}>{p.name}</option>
@@ -90,7 +88,6 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
                 <Text size={"sm"}>{df.note}</Text>
                 <Input
                     defaultValue={value}
-                    placeholder="Default Value"
                     disabled
                     type={df.fieldType.toLowerCase()}>
                 </Input>
@@ -106,7 +103,6 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
                 <Heading size={"md"}>{`${df.field} ${required}`}</Heading>
                 <Text size={"sm"}>{df.note}</Text>
                 <Input
-                    placeholder="Default Value"
                     type={df.fieldType.toLowerCase()}>
                 </Input>
             </Box>

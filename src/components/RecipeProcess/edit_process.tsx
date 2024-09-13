@@ -37,62 +37,62 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         if (process) setEditedProcess(process)
     }, [process])
 
+
     const handleChange = (
         rf: RecipeFlowWithDataFields,
         data_field: RecipeFlowDataFieldInput,
         defaultValue: string
-      ) => {
+    ) => {
         console.log(defaultValue)
         if (editedProcess) {
-          // Update the data fields of the recipe flow
-          const updatedDataFields = rf.dataFields.map((df) => {
-            if (df.id === data_field.id) {
-              // Return a new object with the updated defaultValue
-              return {
-                ...df,
-                defaultValue: defaultValue, // Update the defaultValue
-              };
-            }
-            return df; // Keep the other fields unchanged
-          });
-      
-          // Create a new object for rf with the updated data fields
-          const updatedRecipeFlow: RecipeFlowWithDataFields = {
-            ...rf,
-            dataFields: updatedDataFields,
-          };
-      
-          // Update the recipe flows in the recipe process
-          const updatedRecipeFlows = editedProcess.recipeProcess.recipeFlows.map(
-            (flow) => {
-              if (flow.id === updatedRecipeFlow.id) {
-                // Replace the old flow with the updated flow
-                return updatedRecipeFlow;
-              }
-              return flow; // Keep the other flows unchanged
-            }
-          );
-      
-          // Create a new recipeProcess object with the updated recipeFlows
-          const updatedRecipeProcess: RecipeWithRecipeFlows = {
-            ...editedProcess.recipeProcess,
-            recipeFlows: updatedRecipeFlows,
-          };
-      
-          // Create a new editedProcess object and update the state
-          const updatedProcess: RecipeProcessWithRelation = {
-            ...editedProcess,
-            recipeProcess: updatedRecipeProcess,
-          };
-      
-          // Update the state to trigger a re-render
-          setEditedProcess(updatedProcess);
+            // Update the data fields of the recipe flow
+            const updatedDataFields = rf.dataFields.map((df) => {
+                if (df.id === data_field.id) {
+                    // Return a new object with the updated defaultValue
+                    return {
+                        ...df,
+                        defaultValue: defaultValue, // Update the defaultValue
+                    };
+                }
+                return df; // Keep the other fields unchanged
+            });
+
+            // Create a new object for rf with the updated data fields
+            const updatedRecipeFlow: RecipeFlowWithDataFields = {
+                ...rf,
+                dataFields: updatedDataFields,
+            };
+
+            // Update the recipe flows in the recipe process
+            const updatedRecipeFlows = editedProcess.recipeProcess.recipeFlows.map(
+                (flow) => {
+                    if (flow.id === updatedRecipeFlow.id) {
+                        // Replace the old flow with the updated flow
+                        return updatedRecipeFlow;
+                    }
+                    return flow; // Keep the other flows unchanged
+                }
+            );
+
+            // Create a new recipeProcess object with the updated recipeFlows
+            const updatedRecipeProcess: RecipeWithRecipeFlows = {
+                ...editedProcess.recipeProcess,
+                recipeFlows: updatedRecipeFlows,
+            };
+
+            // Create a new editedProcess object and update the state
+            const updatedProcess: RecipeProcessWithRelation = {
+                ...editedProcess,
+                recipeProcess: updatedRecipeProcess,
+            };
+
+            // Update the state to trigger a re-render
+            setEditedProcess(updatedProcess);
         }
-      };
-      
+    };
+
 
     const onSave = (t: RecipeProcessWithRelation) => {
-        console.log(t)
         onEditedProcess(t)
     }
 
@@ -104,7 +104,11 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                 <Box key={f.id} className="fields">
                     <Heading size={"md"}>{`${f.field} ${required}`}</Heading>
                     <Text size={"sm"}>{f.note}</Text>
-                    <Select onChange={({ target }) => handleChange(rf, f, target.value)} style={{ maxWidth: "20em" }} key={f.id}
+                    <Select 
+                        onChange={({ target }) => handleChange(rf, f, target.value)} 
+                        style={{ maxWidth: "20em" }} 
+                        key={f.id}
+                        defaultValue={f.defaultValue || ""}
                         placeholder="Default Value">
                         {
                             recipeProducts.map(p => {
@@ -121,7 +125,11 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                     <Text size={"sm"}>{f.note}</Text>
                     {
                         locations ? (
-                            <Select onChange={({ target }) => handleChange(rf, f, target.value)} style={{ maxWidth: "20em" }} key={f.id}
+                            <Select 
+                                onChange={({ target }) => handleChange(rf, f, target.value)} 
+                                style={{ maxWidth: "20em" }} 
+                                key={f.id}
+                                defaultValue={f.defaultValue || ""}
                                 placeholder="Default Value">
                                 {
                                     locations.map(p => {
@@ -145,8 +153,9 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                 <Heading size={"md"}>{`${f.field} ${required}`}</Heading>
                 <Text size={"sm"}>{f.note}</Text>
                 <Input
-                    onChange={({ target }) => handleChange(rf, f.id, target.value)}
+                    onChange={({ target }) => handleChange(rf, f, target.value)}
                     placeholder="Default Value"
+                    defaultValue={f.defaultValue || ""}
                     type={f.fieldType.toLowerCase()}>
                 </Input>
             </Box>
