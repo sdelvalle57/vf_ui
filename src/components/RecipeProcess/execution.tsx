@@ -8,7 +8,7 @@ interface Props {
 }
 
 
-const ViewProcesses = ({ recipeId }: Props) => {
+const ProcessExecution = ({ recipeId }: Props) => {
 
     const [openShowProcessModal, setOpenShowProcessModal] = useState(false);
     const [selectedProcess, setSelectedProcess] = useState<RecipeProcessResponse | null>(null)
@@ -25,8 +25,9 @@ const ViewProcesses = ({ recipeId }: Props) => {
         setOpenShowProcessModal(true);
     }
 
-    const renderProcesses = (r: Array<RecipeProcessResponse>) => {
-        return r.map(p => {
+    const renderFirstProcesses = (r: Array<RecipeProcessResponse>) => {
+        const firstProceses = r.filter(r => r.outputOf.length === 0);
+        return firstProceses.map(p => {
             return (
                 <Card onClick={() => onShowProcess(p)} key={p.id} className="new_process_card">
                     <Heading size='x' textTransform='uppercase'>
@@ -56,10 +57,10 @@ const ViewProcesses = ({ recipeId }: Props) => {
                 isOpen={openShowProcessModal} 
                 onClose={() => setOpenShowProcessModal(false)} />
             <div style={{ marginTop: "3em", display: "flex" }}>
-                {renderProcesses(processes)}
+                {renderFirstProcesses(processes)}
             </div>
         </>
     )
 }
 
-export default ViewProcesses;
+export default ProcessExecution;

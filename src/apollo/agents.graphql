@@ -411,6 +411,7 @@ query GetRecipeProcesses($recipeId: Uuid!) {
         roleType
         action
         dataFields {
+          id
           recipeProcessFlowId
           recipeFlowTemplateDataFieldId
           fieldIdentifier
