@@ -1,0 +1,73 @@
+{
+    "type": "FDA",
+    "name": "Shipping",
+    "commitment": "TRANSFER",
+    "events": [
+        {
+            "type": "ECONOMIC_EVENT",
+            "action": "LOAD",
+            "role": "INPUT",
+            "values": [
+                {
+                    "id": "PRODUCT_1",
+                    "class": "PRODUCT",
+                    "field": "Product",
+                    "type": "SELECT",
+                    "description": "Product being shipped, linked to commodity and variety",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "QUANTITY_1",
+                    "class": "QUANTITY",
+                    "field": "Quantity",
+                    "type": "NUMBER",
+                    "description": "Quantity of food being shipped",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "AT_LOCATION_1",
+                    "class": "AT_LOCATION",
+                    "field": "Shipping Location",
+                    "type": "SELECT",
+                    "description": "Name of the location from where you shipped the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "AT_LOCATION_2",
+                    "class": "TO_COMPANY",
+                    "field": "Location immediate subsequent receiver",
+                    "type": "SELECT",
+                    "description": "Name of the location where the food is being shipped",
+                    "form-required": true
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME_1",
+                    "class": "HAS_POINT_IN_TIME",
+                    "field": "Harvest Date",
+                    "type": "DATE",
+                    "description": "Date when the food is being shipped",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "NOTE_1",
+                    "class": "NOTE",
+                    "field": "Notes",
+                    "type": "TEXT",
+                    "description": "Process notes",
+                    "form-required": false
+                }
+            ]
+        },
+        {
+            "type": "ECONOMIC_EVENT",
+            "action": "DISPATCH",
+            "visibility": "HIDDEN",
+            "role": "OUTPUT",
+            "inherits": true
+        }
+    ]
+}

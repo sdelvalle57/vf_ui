@@ -1,9 +1,9 @@
-import { Alert, Box, Button, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react"
-import { FieldClass, Location, FieldType, Recipe, RecipeFlowDataField, RecipeProcessFlowResponse, RecipeProcessResponse, ResourceSpecification, RoleType, useLocationsByAgentQuery, useResourceSpecificationByIdLazyQuery, ActionType } from "../../apollo/__generated__/graphql"
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay } from "@chakra-ui/react"
+import { Location, Recipe, RecipeProcessFlowResponse, RecipeProcessResponse, ResourceSpecification, RoleType, useLocationsByAgentQuery } from "../../apollo/__generated__/graphql"
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
-import FormComponent from "./form";
+import FormComponent, { ProcessFlowWithDataFieldValues } from "./form";
 
 interface Props {
     isOpen: boolean,
@@ -30,6 +30,11 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
         }
     }, [data]);
 
+    const onFormSave = async (dataFieldValues: Array<ProcessFlowWithDataFieldValues>): Promise<boolean> =>  {
+        console.log(dataFieldValues)
+        return true
+    }
+
     
 
     const renderProcessFlows = (flows: Array<RecipeProcessFlowResponse>) => {
@@ -38,12 +43,14 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
                 <div key={1}>
                 <FormComponent 
                     locations={locations}
+                    onFormSave={onFormSave}
                     processFlows={flows.filter(f => f.roleType === RoleType.Input)}
                     resources={resources} />
                 </div>
                 <div key={2}>
                 <FormComponent 
                     locations={locations}
+                    onFormSave={onFormSave}
                     processFlows={flows.filter(f => f.roleType === RoleType.Output)}
                     resources={resources} />
                 </div>

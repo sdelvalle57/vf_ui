@@ -29,7 +29,8 @@
                     "field": "Packing Location",
                     "type": "SELECT",
                     "description": "Name of the location where the is packed",
-                    "form-required": true
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
 
                 },
                 {
@@ -85,7 +86,8 @@
                     "field": "Lot Code",
                     "type": "TEXT",
                     "description": "Assigned Traceability Lot Code",
-                    "form-required": true
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
                 }
             ]
         }

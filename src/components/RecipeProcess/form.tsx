@@ -5,52 +5,73 @@ import { useEffect, useState } from "react";
 interface Props {
     processFlows: Array<RecipeProcessFlowResponse>,
     resources: Array<ResourceSpecification>,
-    locations: Array<Location>
+    locations: Array<Location>,
+    onFormSave: (processFlowDataFieldValues: Array<ProcessFlowWithDataFieldValues>) => Promise<boolean>
 }
 
-interface DataFieldValue {
+export interface ProcessFlowWithDataFieldValues {
+    id: string,
+    processFlowDataFieldValues: Array<DataFieldValue>
+}
+
+export interface DataFieldValue {
     id: string,
     value: string
 }
 
 
-const FormComponent = ({ processFlows, resources, locations }: Props) => {
+const FormComponent = ({ processFlows, resources, locations, onFormSave }: Props) => {
 
-    const [dataFieldValues, setDataFieldValues] = useState<Array<DataFieldValue>>([]);
+    const [processFlowDataFieldValues, setProcessFlowDataFieldValues] = useState<Array<ProcessFlowWithDataFieldValues>>([]);
 
     useEffect(() => {
-        const newDefaultValues: Array<DataFieldValue> = []
+        const processFlowWithDataFieldValues: Array<ProcessFlowWithDataFieldValues> = []
         processFlows.map((p) => {
+            const newDefaultValues: Array<DataFieldValue> = []
             p.dataFields.filter(df => !!df.defaultValue).map((df) => {
                 newDefaultValues.push({
                     id: df.id,
                     value: df.defaultValue as string
                 }) 
             });
+            processFlowWithDataFieldValues.push({
+                id: p.id,
+                processFlowDataFieldValues: newDefaultValues
+            })
+
         });
-        setDataFieldValues(newDefaultValues)
+        setProcessFlowDataFieldValues(processFlowWithDataFieldValues)
     }, [processFlows]);
 
-    console.log(dataFieldValues)
+    console.log(processFlowDataFieldValues)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        //TODO: handle save, execute process
+        const saved = await onFormSave(processFlowDataFieldValues);
+
     }
 
     const handleChange = (
+        pfId: string,
         data_field: RecipeFlowDataField,
         value: string
     ) => {
-        const newValues = dataFieldValues.filter(df => df.id !== data_field.id);
-        newValues.push({
+        const processFlow = processFlowDataFieldValues.find(pf => pf.id === pfId) as ProcessFlowWithDataFieldValues;
+        const newDataFieldValues = processFlow.processFlowDataFieldValues.filter(df => df.id !== data_field.id);
+        newDataFieldValues.push({
             id: data_field.id,
             value
         })
-        setDataFieldValues(newValues)
+        processFlow.processFlowDataFieldValues = newDataFieldValues;
+
+
+        const newProcessFlowDataFieldValues = processFlowDataFieldValues.filter(pf => pf.id !== pfId);
+        newProcessFlowDataFieldValues.push(processFlow);
+
+        setProcessFlowDataFieldValues(newProcessFlowDataFieldValues)
     }
 
-    const renderSelectComponent = (df: RecipeFlowDataField, hideProduct?: boolean) => {
+    const renderSelectComponent = (pfId: string, df: RecipeFlowDataField, hideProduct?: boolean) => {
         const required = df.required ? "*" : "";
         if (df.fieldClass === FieldClass.Product && !hideProduct) {
             return (
@@ -61,7 +82,7 @@ const FormComponent = ({ processFlows, resources, locations }: Props) => {
                         required={df.required}
                         placeholder='Select Product'
                         style={{ maxWidth: "20em" }}
-                        onChange={({ target }) => handleChange(df, target.value)}
+                        onChange={({ target }) => handleChange(pfId, df, target.value)}
                         key={df.id}>
                         {
                             resources.map(p => {
@@ -81,7 +102,7 @@ const FormComponent = ({ processFlows, resources, locations }: Props) => {
                             <Select
                                 required={df.required}
                                 placeholder='Select Address'
-                                onChange={({ target }) => handleChange(df, target.value)}
+                                onChange={({ target }) => handleChange(pfId, df, target.value)}
                                 style={{ maxWidth: "20em" }}
                                 key={df.id}>
                                 {
@@ -98,7 +119,7 @@ const FormComponent = ({ processFlows, resources, locations }: Props) => {
         return null;
     }
 
-    const renderInputComponent = (df: RecipeFlowDataField) => {
+    const renderInputComponent = (pfId: string, df: RecipeFlowDataField) => {
         const required = df.required ? "*" : "";
         if (df.fieldClass === FieldClass.TrackingIdentifier) return null;
         return (
@@ -107,14 +128,14 @@ const FormComponent = ({ processFlows, resources, locations }: Props) => {
                 <FormHelperText>{df.note}</FormHelperText>
                 <Input
                     required={df.required}
-                    onChange={({ target }) => handleChange(df, target.value)}
+                    onChange={({ target }) => handleChange(pfId, df, target.value)}
                     type={df.fieldType.toLowerCase()}>
                 </Input>
             </FormControl>
         )
     }
 
-    const renderDisabledInputComponent = (df: RecipeFlowDataField, hideProduct?: boolean) => {
+    const renderDisabledInputComponent = (pfId: string, df: RecipeFlowDataField, hideProduct?: boolean) => {
         const required = df.required ? "*" : "";
         if (df.fieldClass === FieldClass.TrackingIdentifier) return null;
         if (df.fieldClass === FieldClass.Product && hideProduct) return null;
@@ -141,27 +162,27 @@ const FormComponent = ({ processFlows, resources, locations }: Props) => {
     }
 
 
-    const renderFields = (df: Array<RecipeFlowDataField>, hideProduct?: boolean) => {
-        return df.map((f) => {
-            if (f.defaultValue) return renderDisabledInputComponent(f, hideProduct);
-            if (f.fieldType === FieldType.Select) return renderSelectComponent(f, hideProduct)
-            else if (f.fieldType === FieldType.Number) return renderInputComponent(f)
-            else if (f.fieldType === FieldType.Date) return renderInputComponent(f)
-            else if (f.fieldType === FieldType.Text) return renderInputComponent(f)
+    const renderFields = (pf: RecipeProcessFlowResponse, hideProduct?: boolean) => {
+        return pf.dataFields.map((f) => {
+            if (f.defaultValue) return renderDisabledInputComponent(pf.id, f, hideProduct);
+            if (f.fieldType === FieldType.Select) return renderSelectComponent(pf.id, f, hideProduct)
+            else if (f.fieldType === FieldType.Number) return renderInputComponent(pf.id, f)
+            else if (f.fieldType === FieldType.Date) return renderInputComponent(pf.id, f)
+            else if (f.fieldType === FieldType.Text) return renderInputComponent(pf.id, f)
             return null
         })
     }
 
-    return processFlows.map(rf => {
+    return processFlows.map(pf => {
         let hideProduct = false;
-        if (rf.action === ActionType.Modify) hideProduct = true;
-        const title = rf.roleType === RoleType.Input ? "Input" : "Output"
+        if (pf.action === ActionType.Modify) hideProduct = true;
+        const title = pf.roleType === RoleType.Input ? "Input" : "Output"
 
         return (
-            <div key={rf.id} className="fields">
+            <div key={pf.id} className="fields">
                 <Heading size={"sm"}>{title} Arguments</Heading>
                 <form onSubmit={handleSubmit}>
-                    {renderFields(rf.dataFields, hideProduct)}
+                    {renderFields(pf, hideProduct)}
                     <div style={{ textAlign: "end" }}>
                         <Button
                             mt={4}
