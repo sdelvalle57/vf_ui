@@ -250,18 +250,26 @@ type RecipeFlowTemplateDataField {
 }
 
 mutation CreateRecipeTemplate(
+  $identifier: String!,
   $name: String!,
   $recipeTemplateType: RecipeTemplateType!,
-  $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!
+  $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!,
+  $commitment: ActionType,
+  $fulfills: String
 ) {
   createRecipeTemplate(
+    identifier: $identifier,
     name: $name,
     recipeTemplateType: $recipeTemplateType,
-    recipeFlowTemplateArgs: $recipeFlowTemplateArgs
+    recipeFlowTemplateArgs: $recipeFlowTemplateArgs,
+    commitment: $commitment,
+    fulfills: $fulfills
   ) {
-  id
+    id
     name
     recipeTemplateType
+    commitment
+    fulfills
     recipeFlows {
       id
       recipeTemplateId
@@ -283,9 +291,11 @@ mutation CreateRecipeTemplate(
 
 query GetTemplates {
   getTemplates {
-    id
+   id
     name
     recipeTemplateType
+    commitment
+    fulfills
     recipeFlows {
       id
       recipeTemplateId
@@ -310,6 +320,8 @@ query GetTemplateById($templateId: Uuid!) {
     id
     name
     recipeTemplateType
+    commitment
+    fulfills
     recipeFlows {
       id
       recipeTemplateId
@@ -333,9 +345,11 @@ query GetTemplateById($templateId: Uuid!) {
 # Recipe Template Access
 query GetTemplatesAccessByAgent($agentId: Uuid!) {
   getTemplatesAccessByAgent(agentId: $agentId) {
-    id
+   id
     name
     recipeTemplateType
+    commitment
+    fulfills
     recipeFlows {
       id
       recipeTemplateId

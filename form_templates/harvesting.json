@@ -1,6 +1,7 @@
 {
     "type": "FDA",
     "name": "Harvesting",
+    "id": "Harvesting",
     "events": [
         {
             "type": "ECONOMIC_EVENT",

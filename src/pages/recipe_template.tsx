@@ -1,9 +1,8 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
-import { useGetTemplateByIdLazyQuery, useRecipeByIdLazyQuery } from '../apollo/__generated__/graphql';
+import { useGetTemplateByIdLazyQuery } from '../apollo/__generated__/graphql';
 import { useEffect } from 'react';
 import { Alert, Spinner } from '@chakra-ui/react';
-import RecipeInfo from '../components/Recipes/info';
 import RecipeTemplateInfo from '../components/Templates/recipe_template_info';
 
 const RecipeTemplatePage: NextPage = () => {

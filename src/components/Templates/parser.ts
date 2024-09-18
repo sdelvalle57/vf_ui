@@ -27,6 +27,7 @@ interface Event {
   type: EventType;
   action: ActionType;
   role: RoleType;
+  inherits?: boolean;
   values: Array<EventValue>;
 }
 
@@ -35,6 +36,9 @@ interface Event {
 interface JsonSchema {
   type: RecipeTemplateType;
   name: string;
+  id: string,
+  fulfills?: string,
+  commitment?: ActionType,
   events: Array<Event>;
 }
 
@@ -56,6 +60,7 @@ const eventSchema = z.object({
   type: z.nativeEnum(EventType),
   action: z.nativeEnum(ActionType),
   role: z.nativeEnum(RoleType),
+  inherits: z.boolean().optional(),
   values: z.array(eventValueSchema),
 });
 
@@ -63,6 +68,9 @@ const eventSchema = z.object({
 const jsonSchema = z.object({
   type: z.nativeEnum(RecipeTemplateType),
   name: z.string(),
+  id: z.string(),
+  commitment: z.nativeEnum(ActionType).optional(),
+  fulfills: z.string().optional(),
   events: z.array(eventSchema),
 });
 
@@ -83,6 +91,7 @@ export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplate
       action: v.action,
       eventType: v.type,
       roleType: v.role,
+      inherits: v.inherits,
       dataFields: buildDataFields(v.values),
     };
   });
@@ -99,6 +108,7 @@ const buildDataFields = (values: Array<EventValue>): Array<RecipeFlowTemplateDat
       fieldType: v.type, // Mapping fieldType
       note: v.description || "", // Use description as note
       required: v["form-required"], // Required field
+      flowThrough: v["flow-through"]
     };
   });
   return recipeFlowTemplateDataFieldArgs;

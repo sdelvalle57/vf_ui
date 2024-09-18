@@ -1,6 +1,7 @@
 {
     "type": "FDA",
-    "name": "Cooling_2",
+    "name": "Cooling",
+    "id": "Cooling",
     "events": [
         {
             "type": "ECONOMIC_EVENT",

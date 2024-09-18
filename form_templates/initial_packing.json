@@ -1,6 +1,7 @@
 {
     "type": "FDA",
     "name": "Inital Packing",
+    "id": "InitalPacking",
     "events": [
         {
             "type": "ECONOMIC_EVENT",

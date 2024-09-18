@@ -28,7 +28,7 @@ const RecipeTemplatesComponent = () => {
 
                 <Tabs>
                     <TabList>
-                        <Tab>Tenplates</Tab>
+                        <Tab>Templates</Tab>
                         <Tab>New Template</Tab>
                     </TabList>
     

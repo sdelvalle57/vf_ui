@@ -1,6 +1,7 @@
 {
     "type": "FDA",
     "name": "Transformation",
+    "id": "Transformation",
     "events": [
         {
             "type": "ECONOMIC_EVENT",

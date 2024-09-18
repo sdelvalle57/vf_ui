@@ -1,6 +1,7 @@
 {
     "type": "FDA",
     "name": "Receiving",
+    "id": "Receiving",
     "fulfills": "Shipping",
     "events": [
         {
@@ -57,9 +58,9 @@
         {
             "type": "ECONOMIC_EVENT",
             "action": "UNLOAD",
-            "visibility": "HIDDEN",
-            "role": "INPUT",
-            "inherits": true
+            "role": "OUTPUT",
+            "inherits": true,
+            "values": []
         }
     ]
 }

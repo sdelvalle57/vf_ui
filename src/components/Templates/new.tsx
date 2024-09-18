@@ -11,7 +11,6 @@ const NewTemplate = () => {
 
     const [createRecipeTemplate, { loading, error: createError }] = useCreateRecipeTemplateMutation({
         onCompleted: (data) => {
-            console.log(data)
             toast({
                 title: "Recipe template created.",
                 description: `Recipe ${data.createRecipeTemplate.name} was successfully created.`,
@@ -40,16 +39,12 @@ const NewTemplate = () => {
         
         try {
             const doc = parseJson(jsonDocument)
-            
-            console.log({
-                variables: {
-                    name: doc.name,
-                    recipeTemplateType: doc.type,
-                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
-                }
-            })
+           
             await createRecipeTemplate({
                 variables: {
+                    identifier: doc.id,
+                    commitment: doc.commitment,
+                    fulfills: doc.fulfills,
                     name: doc.name,
                     recipeTemplateType: doc.type,
                     recipeFlowTemplateArgs: parseRecipeFlows(doc.events),

@@ -49,7 +49,6 @@ const RecipeTemplateInfo = ({ recipeTemplate }: Props) => {
                     </AccordionPanel>
                 </AccordionItem>
             )
-
         })
     }
 
@@ -60,6 +59,12 @@ const RecipeTemplateInfo = ({ recipeTemplate }: Props) => {
                     <Stack mt='6' spacing='3'>
                         <Heading size='md'>{recipeTemplate.name}</Heading>
                         <Text>{recipeTemplate.recipeTemplateType}</Text>
+                        {
+                            recipeTemplate.commitment && <Text>{recipeTemplate.commitment}</Text>
+                        }
+                        {
+                            recipeTemplate.fulfills && <Text>{recipeTemplate.fulfills}</Text>
+                        }
                     </Stack>
                 </CardBody>
             </Card>
