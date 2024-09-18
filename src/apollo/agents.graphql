@@ -236,6 +236,7 @@ type RecipeFlowTemplateWithDataFields {
   eventType: EventType!
   roleType: RoleType!
   action: ActionType!
+  inherits: Boolean,
   dataFields: [RecipeFlowTemplateDataField!]!
 }
 
@@ -276,6 +277,7 @@ mutation CreateRecipeTemplate(
       eventType 
       roleType
       action
+      inherits
       dataFields {
         id
         fieldClass
@@ -302,6 +304,7 @@ query GetTemplates {
       eventType
       roleType
       action
+      inherits
       dataFields {
         id
         fieldClass
@@ -328,6 +331,7 @@ query GetTemplateById($templateId: Uuid!) {
       eventType
       roleType
       action
+      inherits
       dataFields {
         id
         fieldClass
@@ -356,6 +360,7 @@ query GetTemplatesAccessByAgent($agentId: Uuid!) {
       eventType
       roleType
       action
+      inherits
       dataFields {
         id
         fieldClass

@@ -37,6 +37,8 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         if (process) setEditedProcess(process)
     }, [process])
 
+    console.log(process)
+
 
     const handleChange = (
         rf: RecipeFlowWithDataFields,
@@ -185,7 +187,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
 
     const renderOutputArguments = (t: RecipeProcessWithRelation) => {
         return t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Output).map(rf => {
-
+            if(rf.inherits) return null
             let hideProduct = false;
             if (rf.action === ActionType.Modify) hideProduct = true;
             return (
@@ -197,16 +199,18 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
     }
 
     const renderFlowsInfo = (t: RecipeProcessWithRelation) => {
+        const renderOutputs = t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Output).filter(rf => !rf.inherits).length;
+        const renderInputs = t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Input).length;
         return (
             <Tabs>
                 <TabList>
-                    <Tab>Inputs</Tab>
-                    <Tab>Outputs</Tab>
+                    {renderInputs > 0 && <Tab>Inputs</Tab>}
+                    {renderOutputs > 0 && <Tab>Outputs</Tab>}
                 </TabList>
 
                 <TabPanels>
-                    <TabPanel>{renderInputArguments(t)} </TabPanel>
-                    <TabPanel>{renderOutputArguments(t)}</TabPanel>
+                    {renderInputs > 0 && <TabPanel>{renderInputArguments(t)}</TabPanel>}
+                    {renderOutputs > 0 && <TabPanel>{renderOutputArguments(t)}</TabPanel>}
                 </TabPanels>
             </Tabs>
         )

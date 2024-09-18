@@ -41,7 +41,7 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
         }
     }, [error])
 
-    console.log(error)
+    console.log(processes)
 
     const onAddProcess = (template: RecipeTemplateWithRecipeFlows) => {
         const lastTemplate = processes[processes.length - 1];
@@ -82,7 +82,6 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
 
     const onSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log(processes)
         try {
             await createRecipeProcesses({
                 variables: {
