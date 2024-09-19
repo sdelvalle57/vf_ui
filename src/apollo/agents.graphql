@@ -196,59 +196,7 @@ mutation CreateRecipe(
 
 
 
-# Recipe Templates
-input RecipeFlowTemplateDataFieldArgInput {
-  field_class: FieldClass!
-  field: String!
-  field_type: FieldType!
-  note: String
-  required: Boolean!
-  query: String
-  default_value: String
-}
 
-# Recipe Template Form Required Fields
-input RecipeFLowRequiredFieldArgInput {
-  from: String!,
-  role: RoleType!,
-  field: FieldClass!
-}
-
-input RecipeFlowTemplateArgInput {
-  event_type: EventType!
-  role_type: RoleType!
-  action: ActionType!
-  data_fields: [RecipeFlowTemplateDataFieldArgInput!]!
-  recipe_flow_required_inputs: [RecipeFLowRequiredFieldArgInput]!
-}
-
-
-type RecipeTemplateWithRecipeFlows {
-  id: ID!
-  name: String!
-  recipeTemplateType: RecipeTemplateType!
-  recipeFlows: [RecipeFlowTemplateWithDataFields!]!
-}
-
-type RecipeFlowTemplateWithDataFields {
-  id: ID!
-  recipeTemplateId: ID!
-  eventType: EventType!
-  roleType: RoleType!
-  action: ActionType!
-  inherits: Boolean,
-  dataFields: [RecipeFlowTemplateDataField!]!
-}
-
-type RecipeFlowTemplateDataField {
-  fieldIdentifier: String!
-  fieldClass: FieldClass!
-  field: String!
-  fieldType: FieldType!
-  note: String
-  required: Boolean!
-  query: String
-}
 
 mutation CreateRecipeTemplate(
   $identifier: String!,
@@ -269,6 +217,7 @@ mutation CreateRecipeTemplate(
     id
     name
     recipeTemplateType
+    identifier
     commitment
     fulfills
     recipeFlows {
@@ -298,6 +247,7 @@ query GetTemplates {
     recipeTemplateType
     commitment
     fulfills
+    identifier
     recipeFlows {
       id
       recipeTemplateId
@@ -325,6 +275,7 @@ query GetTemplateById($templateId: Uuid!) {
     recipeTemplateType
     commitment
     fulfills
+    identifier
     recipeFlows {
       id
       recipeTemplateId
@@ -354,6 +305,7 @@ query GetTemplatesAccessByAgent($agentId: Uuid!) {
     recipeTemplateType
     commitment
     fulfills
+    identifier
     recipeFlows {
       id
       recipeTemplateId
@@ -423,6 +375,7 @@ query GetRecipeProcesses($recipeId: Uuid!) {
       id
       name
       recipeType
+      identifier
       outputOf
       processFlows {
         id
@@ -462,6 +415,7 @@ mutation CreateRecipeProcesses($recipeId: Uuid!, $data: [RecipeProcessWithRelati
       id
       name
       recipeType
+      identifier
       outputOf
       processFlows {
         id

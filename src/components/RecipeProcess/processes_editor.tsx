@@ -18,7 +18,6 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
 
     const [createRecipeProcesses, { loading, error }] = useCreateRecipeProcessesMutation({
         onCompleted: async (data) => {
-            console.log(data)
             toast({
                 title: "Economic Resource created.",
                 description: `Recipe data ${data.createRecipeProcesses.recipe.name} was successfully created.`,
@@ -44,6 +43,7 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
     console.log(processes)
 
     const onAddProcess = (template: RecipeTemplateWithRecipeFlows) => {
+        console.log(template)
         const lastTemplate = processes[processes.length - 1];
         const recipeProcessRelation: RecipeProcessWithRelation = {
             outputOf: lastTemplate?.recipeProcess ? [lastTemplate.recipeProcess] : [],
