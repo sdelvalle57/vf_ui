@@ -227,6 +227,11 @@ mutation CreateRecipeTemplate(
       roleType
       action
       inherits
+      groups {
+        id
+        name
+        groupClass
+      }
       dataFields {
         id
         fieldClass
@@ -255,6 +260,11 @@ query GetTemplates {
       roleType
       action
       inherits
+      groups {
+        id
+        name
+        groupClass
+      }
       dataFields {
         id
         fieldClass
@@ -283,6 +293,11 @@ query GetTemplateById($templateId: Uuid!) {
       roleType
       action
       inherits
+      groups {
+        id
+        name
+        groupClass
+      }
       dataFields {
         id
         fieldClass
@@ -313,6 +328,11 @@ query GetTemplatesAccessByAgent($agentId: Uuid!) {
       roleType
       action
       inherits
+      groups {
+        id
+        name
+        groupClass
+      }
       dataFields {
         id
         fieldClass
@@ -335,7 +355,7 @@ mutation AssignTemplateToAgent($agentId: Uuid!, $recipeTemplateId: Uuid!) {
 }
 
 
-# Locations
+# # Locations
 query LocationsByAgent($agentId: Uuid!) {
   locationsByAgent(agentId: $agentId) {
     id
@@ -354,87 +374,88 @@ mutation CreateLocation($agentId: Uuid!, $name: String!, $value: String!) {
   }
 }
 
-# Get recipe processes
-query GetRecipeProcesses($recipeId: Uuid!) {
-  getRecipeProcesses(recipeId: $recipeId) {
-    recipe {
-      id
-      agentId
-      name
-      note
-      createdAt
-    }
-    resources {
-      id
-      name
-      note
-      resourceType
-      unitOfMeasure
-    }
-    recipeProcesses {
-      id
-      name
-      recipeType
-      identifier
-      outputOf
-      processFlows {
-        id
-        eventType
-        roleType
-        action
-        dataFields {
-          id
-          recipeProcessFlowId
-          recipeFlowTemplateDataFieldId
-          fieldIdentifier
-          fieldClass
-          field
-          fieldType
-          note
-          required
-          defaultValue
-          flowThrough
-        }
-      }
-    }
-  }
-}
+# # Get recipe processes
+# query GetRecipeProcesses($recipeId: Uuid!) {
+#   getRecipeProcesses(recipeId: $recipeId) {
+#     recipe {
+#       id
+#       agentId
+#       name
+#       note
+#       createdAt
+#     }
+#     resources {
+#       id
+#       name
+#       note
+#       resourceType
+#       unitOfMeasure
+#     }
+#     recipeProcesses {
+#       id
+#       name
+#       recipeType
+#       identifier
+#       outputOf
+#       processFlows {
+#         id
+#         eventType
+#         roleType
+#         action
+#         dataFields {
+#           id
+#           recipeProcessFlowId
+#           recipeFlowTemplateDataFieldId
+#           fieldIdentifier
+#           fieldClass
+#           field
+#           fieldType
+#           note
+#           required
+#           defaultValue
+#           flowThrough
+#         }
+#       }
+#     }
+#   }
+# }
 
 
-# Create recipe processes
-mutation CreateRecipeProcesses($recipeId: Uuid!, $data: [RecipeProcessWithRelation!]!) {
-  createRecipeProcesses(recipeId: $recipeId, data: $data) {
-    recipe {
-      id
-      agentId
-      name
-      note
-      createdAt
-    }
-    recipeProcesses {
-      id
-      name
-      recipeType
-      identifier
-      outputOf
-      processFlows {
-        id
-        eventType
-        roleType
-        action
-        dataFields {
-          recipeProcessFlowId
-          recipeFlowTemplateDataFieldId
-          fieldIdentifier
-          fieldClass
-          field
-          fieldType
-          note
-          required
-          defaultValue
-          flowThrough
-        }
-      }
-    }
-  }
-}
+# # Create recipe processes
+# mutation CreateRecipeProcesses($recipeId: Uuid!, $data: [RecipeProcessWithRelation!]!) {
+#   createRecipeProcesses(recipeId: $recipeId, data: $data) {
+#     recipe {
+#       id
+#       agentId
+#       name
+#       note
+#       createdAt
+#     }
+#     recipeProcesses {
+#       id
+#       name
+#       recipeType
+#       identifier
+#       outputOf
+#       processFlows {
+#         id
+#         eventType
+#         roleType
+#         action
+#         dataFields {
+#           recipeProcessFlowId
+#           recipeFlowTemplateDataFieldId
+#           fieldIdentifier
+#           fieldClass
+#           field
+#           fieldType
+#           note
+#           required
+#           defaultValue
+#           flowThrough
+#         }
+#       }
+#     }
+#   }
+# }
+

@@ -8,7 +8,8 @@ import {
   RecipeFlowTemplateDataFieldArg,
   RecipeTemplateType,
   RoleType,
-  FlowThrough
+  FlowThrough,
+  FieldGroupClass
 } from "../../apollo/__generated__/graphql";
 
 // EventValue interface
@@ -22,6 +23,13 @@ interface EventValue {
   "flow-through"?: FlowThrough; // Add the flow-through field as an optional string
 }
 
+// Group interface
+interface Group {
+  name: string;
+  class: FieldGroupClass;
+  fields: Array<string>;
+}
+
 // Event interface
 interface Event {
   type: EventType;
@@ -29,16 +37,16 @@ interface Event {
   role: RoleType;
   inherits?: boolean;
   values: Array<EventValue>;
+  groups?: Array<Group>; // Add groups array as optional
 }
-
 
 // JsonSchema interface
 interface JsonSchema {
   type: RecipeTemplateType;
   name: string;
-  id: string,
-  fulfills?: string,
-  commitment?: ActionType,
+  id: string;
+  fulfills?: string;
+  commitment?: ActionType;
   events: Array<Event>;
 }
 
@@ -55,6 +63,13 @@ const eventValueSchema = z.object({
   "flow-through": z.nativeEnum(FlowThrough).optional(), // Optional field, not present in the JSON
 });
 
+// Schema for Group
+const groupSchema = z.object({
+  name: z.string(),
+  class: z.nativeEnum(FieldGroupClass), // Class can be a string, e.g., "Product", "Location"
+  fields: z.array(z.string()) // List of field IDs as strings
+});
+
 // Schema for Event
 const eventSchema = z.object({
   type: z.nativeEnum(EventType),
@@ -62,6 +77,7 @@ const eventSchema = z.object({
   role: z.nativeEnum(RoleType),
   inherits: z.boolean().optional(),
   values: z.array(eventValueSchema),
+  groups: z.array(groupSchema).optional() // Groups array as optional
 });
 
 // Schema for the entire JSON
@@ -83,7 +99,6 @@ export const parseJson = (data: string): JsonSchema => {
   return result.data;
 };
 
-
 // Parse Recipe Flows
 export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplateArg> => {
   const recipeFlowTemplateArgs: Array<RecipeFlowTemplateArg> = values.map((v) => {
@@ -93,6 +108,7 @@ export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplate
       roleType: v.role,
       inherits: v.inherits,
       dataFields: buildDataFields(v.values),
+      groups: v.groups || []
     };
   });
   return recipeFlowTemplateArgs;

@@ -9,8 +9,8 @@
             "role": "OUTPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_1",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being harvested, linked to commodity and variety",
@@ -27,8 +27,17 @@
                     "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "AT_LOCATION_1",
-                    "class": "AT_LOCATION",
+                    "id": "AGENT_1",
+                    "class": "AGENT",
+                    "field": "Harvester Company",
+                    "type": "SELECT",
+                    "description": "Name of the company that harvested the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_1",
+                    "class": "LOCATION",
                     "field": "Harvest Location",
                     "type": "SELECT",
                     "description": "Name of the location where the food was harvested",
@@ -36,11 +45,20 @@
                     "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "AT_LOCATION_2",
-                    "class": "AT_LOCATION",
+                    "id": "AGENT_2",
+                    "class": "AGENT",
+                    "field": "Receiver Company",
+                    "type": "SELECT",
+                    "description": "Company immediate subsequent receiver",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_2",
+                    "class": "LOCATION",
                     "field": "Location immediate subsequent receiver",
                     "type": "SELECT",
-                    "description": "Name of the location where the food was harvested",
+                    "description": "Location immediate subsequent receiver",
                     "form-required": true
                 },
                 {
@@ -59,6 +77,23 @@
                     "type": "TEXT",
                     "description": "Process notes",
                     "form-required": false
+                }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "Product",
+                    "fields": ["RESOURCE_SPECIFICATION_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Harvest Location",
+                    "class": "Location",
+                    "fields": ["AGENT_1, LOCATION_1"]
+                },
+                {
+                    "name": "Location Immediate Subsequent Receiver",
+                    "class": "Location",
+                    "fields": ["AGENT_2, LOCATION_2"]
                 }
             ]
         }

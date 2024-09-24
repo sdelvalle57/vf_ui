@@ -24,6 +24,8 @@ const ProcessModal = ({ isOpen, onClose, process, recipe, resources }: Props) =>
         pollInterval: 5000  // Skip the query if selectedAgent is null
     });
 
+    
+
     useEffect(() => {
         if (data?.locationsByAgent) {
             setLocations(data.locationsByAgent);
