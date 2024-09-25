@@ -5,15 +5,24 @@
     "events": [
         {
             "type": "ECONOMIC_EVENT",
+            "id": "ACCEPT_IP_1",
             "action": "ACCEPT",
             "role": "INPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_1",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being packed, linked to commodity and variety",
+                    "form-required": true
+                },
+                {
+                    "id": "ECONOMIC_RESOURCE_1",
+                    "class": "ECONOMIC_RESOURCE",
+                    "field": "Product Reference",
+                    "type": "SELECT",
+                    "description": "Product reference number",
                     "form-required": true
                 },
                 {
@@ -21,15 +30,24 @@
                     "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
-                    "description": "Quantity of food being packed",
+                    "description": "Quantity of food being cooled",
                     "form-required": true
                 },
                 {
-                    "id": "AT_LOCATION_1",
-                    "class": "AT_LOCATION",
+                    "id": "AGENT_1",
+                    "class": "AGENT",
+                    "field": "Packing Company",
+                    "type": "SELECT",
+                    "description": "Name of the company that packed the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_1",
+                    "class": "LOCATION",
                     "field": "Packing Location",
                     "type": "SELECT",
-                    "description": "Name of the location where the is packed",
+                    "description": "Name of the location where the food is packed",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
 
@@ -50,31 +68,48 @@
                     "description": "Process notes",
                     "form-required": false
                 }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "ECONOMIC_RESOURCE",
+                    "fields": ["RESOURCE_SPECIFICATION_1", "ECONOMIC_RESOURCE_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Initial Packing Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_1, LOCATION_1"]
+                }
             ]
         },
         {
             "type": "ECONOMIC_EVENT",
             "action": "MODIFY",
+            "id": "MODIFY_IP_1",
             "role": "OUTPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_2",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product packed, linked to commodity and variety",
-                    "form-required": true
+                    "form-required": true,
+                    "inherits": {
+                        "id": "ACCEPT_IP_1",
+                        "field": "RESOURCE_SPECIFICATION_1"
+                    }
                 },
                 {
-                    "id": "QUANTITY_1",
+                    "id": "QUANTITY_2",
                     "class": "QUANTITY",
                     "field": "Quantity",
                     "type": "NUMBER",
-                    "description": "Quantity of food packed",
+                    "description": "Quantity of food cooled",
                     "form-required": true
                 },
                 {
-                    "id": "NOTE_1",
+                    "id": "NOTE_2",
                     "class": "NOTE",
                     "field": "Notes",
                     "type": "TEXT",
@@ -89,6 +124,13 @@
                     "description": "Assigned Traceability Lot Code",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
+                }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "fields": ["RESOURCE_SPECIFICATION_2", "QUANTITY_2"]
                 }
             ]
         }

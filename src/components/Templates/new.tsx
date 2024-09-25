@@ -21,12 +21,9 @@ const NewTemplate = () => {
             setJsonDocument('');
         },
         onError: (e) => {
-            console.log(e)
             setError(e.message)
         }
     });
-
-    console.log(createError)
 
     const setJsonDocumentValue = (val: string) => {
         setJsonDocument(val);
@@ -39,6 +36,18 @@ const NewTemplate = () => {
         
         try {
             const doc = parseJson(jsonDocument)
+
+            console.log({
+                variables: {
+                    identifier: doc.id,
+                    commitment: doc.commitment,
+                    fulfills: doc.fulfills,
+                    name: doc.name,
+                    recipeTemplateType: doc.type,
+                    trigger: doc.trigger,
+                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
+                },
+            })
            
             await createRecipeTemplate({
                 variables: {
@@ -47,10 +56,12 @@ const NewTemplate = () => {
                     fulfills: doc.fulfills,
                     name: doc.name,
                     recipeTemplateType: doc.type,
+                    trigger: doc.trigger,
                     recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
                 },
             });
         } catch (e: any) {
+            console.log(e)
             setError(e.message)
         }
     }

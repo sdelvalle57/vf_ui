@@ -12,6 +12,11 @@ import {
   FieldGroupClass
 } from "../../apollo/__generated__/graphql";
 
+interface FieldInheritance {
+  id: string,
+  field: string
+}
+
 // EventValue interface
 interface EventValue {
   id: string;
@@ -20,7 +25,8 @@ interface EventValue {
   type: FieldType;
   description: string;
   "form-required": boolean;
-  "flow-through"?: FlowThrough; // Add the flow-through field as an optional string
+  "flow-through"?: FlowThrough; 
+  inherits?: FieldInheritance
 }
 
 // Group interface
@@ -33,9 +39,9 @@ interface Group {
 // Event interface
 interface Event {
   type: EventType;
+  id: string,
   action: ActionType;
   role: RoleType;
-  inherits?: boolean;
   values: Array<EventValue>;
   groups?: Array<Group>; // Add groups array as optional
 }
@@ -47,10 +53,15 @@ interface JsonSchema {
   id: string;
   fulfills?: string;
   commitment?: ActionType;
+  trigger?: ActionType;
   events: Array<Event>;
 }
 
 // Zod schemas
+const fieldInheritanceSchema = z.object({
+  id: z.string(),
+  field: z.string(),
+})
 
 // Schema for EventValue
 const eventValueSchema = z.object({
@@ -60,7 +71,8 @@ const eventValueSchema = z.object({
   type: z.nativeEnum(FieldType),
   description: z.string(),
   "form-required": z.boolean(),
-  "flow-through": z.nativeEnum(FlowThrough).optional(), // Optional field, not present in the JSON
+  "flow-through": z.nativeEnum(FlowThrough).optional(), 
+  inherits: fieldInheritanceSchema.optional()
 });
 
 // Schema for Group
@@ -73,6 +85,7 @@ const groupSchema = z.object({
 // Schema for Event
 const eventSchema = z.object({
   type: z.nativeEnum(EventType),
+  id: z.string(),
   action: z.nativeEnum(ActionType),
   role: z.nativeEnum(RoleType),
   inherits: z.boolean().optional(),
@@ -87,6 +100,7 @@ const jsonSchema = z.object({
   id: z.string(),
   commitment: z.nativeEnum(ActionType).optional(),
   fulfills: z.string().optional(),
+  trigger: z.nativeEnum(ActionType).optional(),
   events: z.array(eventSchema),
 });
 
@@ -106,7 +120,7 @@ export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplate
       action: v.action,
       eventType: v.type,
       roleType: v.role,
-      inherits: v.inherits,
+      identifier: v.id,
       dataFields: buildDataFields(v.values),
       groups: v.groups || []
     };
@@ -116,7 +130,7 @@ export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplate
 
 // Build Data Fields
 const buildDataFields = (values: Array<EventValue>): Array<RecipeFlowTemplateDataFieldArg> => {
-  const recipeFlowTemplateDataFieldArgs: Array<RecipeFlowTemplateDataFieldArg> = values.map((v) => {
+  const recipeFlowTemplateDataFieldArgs: Array<RecipeFlowTemplateDataFieldArg> = values.map((v: EventValue) => {
     return {
       fieldClass: v.class, // Use the class field from EventValue
       fieldIdentifier: v.id, // ID should be passed as fieldIdentifier
@@ -124,7 +138,11 @@ const buildDataFields = (values: Array<EventValue>): Array<RecipeFlowTemplateDat
       fieldType: v.type, // Mapping fieldType
       note: v.description || "", // Use description as note
       required: v["form-required"], // Required field
-      flowThrough: v["flow-through"]
+      flowThrough: v["flow-through"],
+      inherits: v.inherits && {
+        field: v.inherits.field,
+        identifier: v.inherits.id
+      }
     };
   });
   return recipeFlowTemplateDataFieldArgs;

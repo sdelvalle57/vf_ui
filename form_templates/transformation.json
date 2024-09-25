@@ -6,14 +6,23 @@
         {
             "type": "ECONOMIC_EVENT",
             "action": "CONSUME",
+            "id": "CONSUME_TR_1",
             "role": "INPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_1",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being transformed, linked to commodity and variety",
+                    "form-required": true
+                },
+                {
+                    "id": "ECONOMIC_RESOURCE_1",
+                    "class": "ECONOMIC_RESOURCE",
+                    "field": "Product Reference",
+                    "type": "SELECT",
+                    "description": "Product reference number",
                     "form-required": true
                 },
                 {
@@ -25,13 +34,31 @@
                     "form-required": true
                 },
                 {
-                    "id": "AT_LOCATION_1",
-                    "class": "AT_LOCATION",
-                    "field": "Transform Location",
+                    "id": "AGENT_1",
+                    "class": "AGENT",
+                    "field": "Cooling Company",
                     "type": "SELECT",
-                    "description": "Name of the location where the food is transformed",
-                    "form-required": true
-
+                    "description": "Name of the company that cooled the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_1",
+                    "class": "LOCATION",
+                    "field": "Cooling Location",
+                    "type": "SELECT",
+                    "description": "Name of the location where the food is cooled",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "HAS_POINT_IN_TIME_1",
+                    "class": "HAS_POINT_IN_TIME",
+                    "field": "Cooling Date Entry",
+                    "type": "DATE",
+                    "description": "Date when the food entered cooling station",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
                 },
                 {
                     "id": "NOTE_1",
@@ -41,16 +68,29 @@
                     "description": "Process notes",
                     "form-required": false
                 }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "ECONOMIC_RESOURCE",
+                    "fields": ["RESOURCE_SPECIFICATION_1", "ECONOMIC_RESOURCE_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Transform Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_1, LOCATION_1"]
+                }
             ]
         },
         {
             "type": "ECONOMIC_EVENT",
             "action": "PRODUCE",
+            "id": "PRODUCE_TR_1",
             "role": "OUTPUT",
             "values": [
                 {
-                    "id": "PRODUCT_2",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_2",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product produced, linked to commodity and variety",
@@ -67,9 +107,9 @@
                 {
                     "id": "HAS_POINT_IN_TIME_2",
                     "class": "HAS_POINT_IN_TIME",
-                    "field": "Harvest Date",
+                    "field": "Production Date",
                     "type": "DATE",
-                    "description": "Date when the food was harvested",
+                    "description": "Date when the food got produced",
                     "form-required": true
                 },
                 {
@@ -87,6 +127,13 @@
                     "type": "TEXT",
                     "description": "Assigned Traceability Lot Code",
                     "form-required": true
+                }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "fields": ["RESOURCE_SPECIFICATION_2", "QUANTITY_2"]
                 }
             ]
         }

@@ -6,6 +6,7 @@
         {
             "type": "ECONOMIC_EVENT",
             "action": "PRODUCE",
+            "id": "PRODUCE_1",
             "role": "OUTPUT",
             "values": [
                 {
@@ -82,17 +83,17 @@
             "groups": [
                 {
                     "name": "Product",
-                    "class": "Product",
+                    "class": "RESOURCE_SPECIFICATION",
                     "fields": ["RESOURCE_SPECIFICATION_1", "QUANTITY_1"]
                 },
                 {
                     "name": "Harvest Location",
-                    "class": "Location",
+                    "class": "LOCATION",
                     "fields": ["AGENT_1, LOCATION_1"]
                 },
                 {
                     "name": "Location Immediate Subsequent Receiver",
-                    "class": "Location",
+                    "class": "LOCATION",
                     "fields": ["AGENT_2, LOCATION_2"]
                 }
             ]

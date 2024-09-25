@@ -5,15 +5,24 @@
     "events": [
         {
             "type": "ECONOMIC_EVENT",
+            "id": "ACCEPT_1",
             "action": "ACCEPT",
             "role": "INPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_1",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being cooled, linked to commodity and variety",
+                    "form-required": true
+                },
+                {
+                    "id": "ECONOMIC_RESOURCE_1",
+                    "class": "ECONOMIC_RESOURCE",
+                    "field": "Product Reference",
+                    "type": "SELECT",
+                    "description": "Product reference number",
                     "form-required": true
                 },
                 {
@@ -25,14 +34,22 @@
                     "form-required": true
                 },
                 {
-                    "id": "AT_LOCATION_1",
-                    "class": "AT_LOCATION",
+                    "id": "AGENT_1",
+                    "class": "AGENT",
+                    "field": "Cooling Company",
+                    "type": "SELECT",
+                    "description": "Name of the company that cooled the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_1",
+                    "class": "LOCATION",
                     "field": "Cooling Location",
                     "type": "SELECT",
                     "description": "Name of the location where the food is cooled",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
-
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
@@ -51,20 +68,37 @@
                     "description": "Process notes",
                     "form-required": false
                 }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "ECONOMIC_RESOURCE",
+                    "fields": ["RESOURCE_SPECIFICATION_1", "ECONOMIC_RESOURCE_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Cooling Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_1, LOCATION_1"]
+                }
             ]
         },
         {
             "type": "ECONOMIC_EVENT",
+            "id": "MODIFY_1",
             "action": "MODIFY",
             "role": "OUTPUT",
             "values": [
                 {
-                    "id": "PRODUCT_2",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_2",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being cooled, linked to commodity and variety",
-                    "form-required": true
+                    "form-required": true,
+                    "inherits": {
+                        "id": "ACCEPT_1",
+                        "field": "RESOURCE_SPECIFICATION_1"
+                    }
                 },
                 {
                     "id": "QUANTITY_2",
@@ -89,6 +123,13 @@
                     "type": "TEXT",
                     "description": "Average Temperature",
                     "form-required": false
+                }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "fields": ["RESOURCE_SPECIFICATION_2", "QUANTITY_2"]
                 }
             ]
         }

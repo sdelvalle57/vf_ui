@@ -3,20 +3,29 @@
     "name": "Shipping",
     "id": "Shipping",
     "commitment": "TRANSFER",
+    "trigger": "DISPATCH",
     "events": [
         {
             "type": "ECONOMIC_EVENT",
             "action": "LOAD",
+            "id": "LOAD_S_1",
             "role": "INPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_1",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being shipped, linked to commodity and variety",
-                    "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "form-required": true
+                },
+                {
+                    "id": "ECONOMIC_RESOURCE_1",
+                    "class": "ECONOMIC_RESOURCE",
+                    "field": "Product Reference",
+                    "type": "SELECT",
+                    "description": "Product reference number",
+                    "form-required": true
                 },
                 {
                     "id": "QUANTITY_1",
@@ -24,30 +33,48 @@
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food being shipped",
+                    "form-required": true
+                },
+                {
+                    "id": "AGENT_1",
+                    "class": "AGENT",
+                    "field": "Shipping Company",
+                    "type": "SELECT",
+                    "description": "Name of the company that cooled the food",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "AT_LOCATION_1",
-                    "class": "AT_LOCATION",
+                    "id": "LOCATION_1",
+                    "class": "LOCATION",
                     "field": "Shipping Location",
                     "type": "SELECT",
-                    "description": "Name of the location from where you shipped the food",
+                    "description": "Name of the location where the food is cooled",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "AT_LOCATION_2",
-                    "class": "TO_COMPANY",
-                    "field": "Location immediate subsequent receiver",
+                    "id": "AGENT_2",
+                    "class": "AGENT",
+                    "field": "Receiver Company",
+                    "type": "SELECT",
+                    "description": "Name of the company that receives the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_2",
+                    "class": "LOCATION",
+                    "field": "Receiver Location",
                     "type": "SELECT",
                     "description": "Name of the location where the food is being shipped",
-                    "form-required": true
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
                     "class": "HAS_POINT_IN_TIME",
-                    "field": "Harvest Date",
+                    "field": "Shipping Date",
                     "type": "DATE",
                     "description": "Date when the food is being shipped",
                     "form-required": true,
@@ -61,14 +88,24 @@
                     "description": "Process notes",
                     "form-required": false
                 }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "ECONOMIC_RESOURCE",
+                    "fields": ["RESOURCE_SPECIFICATION_1", "ECONOMIC_RESOURCE_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Shipping Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_1, LOCATION_1"]
+                },
+                {
+                    "name": "Receiver Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_2, LOCATION_2"]
+                }
             ]
-        },
-        {
-            "type": "ECONOMIC_EVENT",
-            "action": "DISPATCH",
-            "role": "OUTPUT",
-            "inherits": true,
-            "values": []
         }
     ]
 }

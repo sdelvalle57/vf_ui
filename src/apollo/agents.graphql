@@ -194,7 +194,41 @@ mutation CreateRecipe(
   }
 }
 
+fragment RecipeFlowTemplateWithDataFieldsFragment on RecipeFlowTemplateWithDataFields {
+  id
+  recipeTemplateId
+  eventType
+  roleType
+  action
+  groups {
+    id
+    name
+    groupClass
+  }
+  dataFields {
+    id
+    fieldClass
+    field
+    fieldType
+    note
+    required
+    fieldIdentifier
+    inherits
+  }
+}
 
+fragment RecipeTemplateWithRecipeFlowsFragment on RecipeTemplateWithRecipeFlows {
+  id
+    name
+    recipeTemplateType
+    identifier
+    commitment
+    fulfills
+    trigger
+    recipeFlows {
+      ...RecipeFlowTemplateWithDataFieldsFragment
+    }
+}
 
 
 
@@ -204,7 +238,8 @@ mutation CreateRecipeTemplate(
   $recipeTemplateType: RecipeTemplateType!,
   $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!,
   $commitment: ActionType,
-  $fulfills: String
+  $fulfills: String,
+  $trigger: ActionType
 ) {
   createRecipeTemplate(
     identifier: $identifier,
@@ -212,102 +247,42 @@ mutation CreateRecipeTemplate(
     recipeTemplateType: $recipeTemplateType,
     recipeFlowTemplateArgs: $recipeFlowTemplateArgs,
     commitment: $commitment,
-    fulfills: $fulfills
+    fulfills: $fulfills,
+    trigger: $trigger
   ) {
-    id
-    name
-    recipeTemplateType
-    identifier
-    commitment
-    fulfills
-    recipeFlows {
-      id
-      recipeTemplateId
-      eventType 
-      roleType
-      action
-      inherits
-      groups {
-        id
-        name
-        groupClass
-      }
-      dataFields {
-        id
-        fieldClass
-        field
-        fieldType
-        note
-        required
-        fieldIdentifier
-      }
-    }
+    ...RecipeTemplateWithRecipeFlowsFragment
   }
+}
+
+mutation CreateRecipeTemplate2(
+  $identifier: String!,
+  $name: String!,
+  $recipeTemplateType: RecipeTemplateType!,
+  $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!,
+  $commitment: ActionType,
+  $fulfills: String,
+  $trigger: ActionType
+) {
+  createRecipeTemplate2(
+    identifier: $identifier,
+    name: $name,
+    recipeTemplateType: $recipeTemplateType,
+    recipeFlowTemplateArgs: $recipeFlowTemplateArgs,
+    commitment: $commitment,
+    fulfills: $fulfills,
+    trigger: $trigger
+  ) 
 }
 
 query GetTemplates {
   getTemplates {
-   id
-    name
-    recipeTemplateType
-    commitment
-    fulfills
-    identifier
-    recipeFlows {
-      id
-      recipeTemplateId
-      eventType
-      roleType
-      action
-      inherits
-      groups {
-        id
-        name
-        groupClass
-      }
-      dataFields {
-        id
-        fieldClass
-        field
-        fieldType
-        note
-        required
-        fieldIdentifier
-      }
-    }
+    ...RecipeTemplateWithRecipeFlowsFragment
   }
 }
 
 query GetTemplateById($templateId: Uuid!) {
   getTemplateById(templateId: $templateId) {
-    id
-    name
-    recipeTemplateType
-    commitment
-    fulfills
-    identifier
-    recipeFlows {
-      id
-      recipeTemplateId
-      eventType
-      roleType
-      action
-      inherits
-      groups {
-        id
-        name
-        groupClass
-      }
-      dataFields {
-        id
-        fieldClass
-        field
-        fieldType
-        note
-        required
-        fieldIdentifier
-      }
-    }
+    ...RecipeTemplateWithRecipeFlowsFragment
   }
 }
 
@@ -315,34 +290,7 @@ query GetTemplateById($templateId: Uuid!) {
 # Recipe Template Access
 query GetTemplatesAccessByAgent($agentId: Uuid!) {
   getTemplatesAccessByAgent(agentId: $agentId) {
-   id
-    name
-    recipeTemplateType
-    commitment
-    fulfills
-    identifier
-    recipeFlows {
-      id
-      recipeTemplateId
-      eventType
-      roleType
-      action
-      inherits
-      groups {
-        id
-        name
-        groupClass
-      }
-      dataFields {
-        id
-        fieldClass
-        field
-        fieldType
-        note
-        required
-        fieldIdentifier
-      }
-    }
+   ...RecipeTemplateWithRecipeFlowsFragment
   }
 }
 

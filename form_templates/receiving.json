@@ -3,18 +3,20 @@
     "name": "Receiving",
     "id": "Receiving",
     "fulfills": "Shipping",
+    "trigger": "UNLOAD",
     "events": [
         {
             "type": "ECONOMIC_EVENT",
             "action": "ACCEPT",
+            "id": "ACCEPT_R_1",
             "role": "INPUT",
             "values": [
                 {
-                    "id": "PRODUCT_1",
-                    "class": "PRODUCT",
+                    "id": "RESOURCE_SPECIFICATION_1",
+                    "class": "RESOURCE_SPECIFICATION",
                     "field": "Product",
                     "type": "SELECT",
-                    "description": "Product being shipped, linked to commodity and variety",
+                    "description": "Product being received, linked to commodity and variety",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
                 },
@@ -28,11 +30,20 @@
                     "flow-through": "EXTERNAL"
                 },
                 {
-                    "id": "AT_LOCATION_1",
-                    "class": "AT_LOCATION",
+                    "id": "AGENT_1",
+                    "class": "AGENT",
+                    "field": "Shipping Company",
+                    "type": "SELECT",
+                    "description": "Name of the company that received the food",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL"
+                },
+                {
+                    "id": "LOCATION_1",
+                    "class": "LOCATION",
                     "field": "Shipping Location",
                     "type": "SELECT",
-                    "description": "Name of the location from where you shipped the food",
+                    "description": "Name of the location where the food is received",
                     "form-required": true,
                     "flow-through": "EXTERNAL"
                 },
@@ -53,14 +64,19 @@
                     "description": "Process notes",
                     "form-required": false
                 }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "fields": ["RESOURCE_SPECIFICATION_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Receiver Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_1, LOCATION_1"]
+                }
             ]
-        },
-        {
-            "type": "ECONOMIC_EVENT",
-            "action": "UNLOAD",
-            "role": "OUTPUT",
-            "inherits": true,
-            "values": []
         }
     ]
 }
