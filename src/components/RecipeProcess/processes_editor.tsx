@@ -1,7 +1,7 @@
 import { Button, Card, CardBody, Grid, GridItem, Heading, Text, useToast } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import TemplatesComponent from "./templates";
-import { RecipeProcessWithRelation, RecipeTemplateWithRecipeFlows, RecipeWithResources, useCreateRecipeProcessesMutation } from "../../apollo/__generated__/graphql";
+import { RecipeProcessWithRelation, RecipeTemplateWithRecipeFlows, RecipeWithResources } from "../../apollo/__generated__/graphql";
 import EditProcessComponent from "./edit_process";
 
 interface Props {
@@ -15,30 +15,33 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
     const [selectedProcess, setSelectedProcess] = useState<RecipeProcessWithRelation | null>(null)
     const [processes, setProcesses] = useState<Array<RecipeProcessWithRelation>>([])
 
+    console.log(recipe)
+    console.log(processes)
 
-    const [createRecipeProcesses, { loading, error }] = useCreateRecipeProcessesMutation({
-        onCompleted: async (data) => {
-            toast({
-                title: "Economic Resource created.",
-                description: `Recipe data ${data.createRecipeProcesses.recipe.name} was successfully created.`,
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-            });
-        },
-    });
 
-    useEffect(() => {
-        if (error) {
-            toast({
-                title: "Error assigning template",
-                description: error.message,
-                status: "error",
-                duration: 5000,
-                isClosable: true,
-            });
-        }
-    }, [error])
+    // const [createRecipeProcesses, { loading, error }] = useCreateRecipeProcessesMutation({
+    //     onCompleted: async (data) => {
+    //         toast({
+    //             title: "Economic Resource created.",
+    //             description: `Recipe data ${data.createRecipeProcesses.recipe.name} was successfully created.`,
+    //             status: "success",
+    //             duration: 5000,
+    //             isClosable: true,
+    //         });
+    //     },
+    // });
+
+    // useEffect(() => {
+    //     if (error) {
+    //         toast({
+    //             title: "Error assigning template",
+    //             description: error.message,
+    //             status: "error",
+    //             duration: 5000,
+    //             isClosable: true,
+    //         });
+    //     }
+    // }, [error])
 
     console.log(processes)
 
@@ -82,22 +85,22 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
 
     const onSave = async (e: React.FormEvent) => {
         e.preventDefault();
-        try {
-            await createRecipeProcesses({
-                variables: {
-                    recipeId: recipe.recipe.id,
-                    data: removeTypename(processes)
-                },
-            });
-        } catch (err: any) {
-            toast({
-                title: "An error occurred.",
-                description: err.message,
-                status: "error",
-                duration: 5000,
-                isClosable: true,
-            });
-        }
+        // try {
+        //     await createRecipeProcesses({
+        //         variables: {
+        //             recipeId: recipe.recipe.id,
+        //             data: removeTypename(processes)
+        //         },
+        //     });
+        // } catch (err: any) {
+        //     toast({
+        //         title: "An error occurred.",
+        //         description: err.message,
+        //         status: "error",
+        //         duration: 5000,
+        //         isClosable: true,
+        //     });
+        // }
     };
 
 

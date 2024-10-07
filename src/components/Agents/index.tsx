@@ -22,8 +22,6 @@ const AgentComponent = () => {
     if (loading) return <Spinner />
     if (!data) return null;
 
-
-
     return (
         <div >
             <Tabs>

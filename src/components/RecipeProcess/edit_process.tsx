@@ -100,7 +100,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
 
     const renderSelectComponent = (f: RecipeFlowDataFieldInput, rf: RecipeFlowWithDataFields, hideProduct?: boolean) => {
         const required = f.required ? "*" : ""
-        if (f.fieldClass === FieldClass.Product && !hideProduct) {
+        if (f.fieldClass === FieldClass.ResourceSpecification && !hideProduct) {
             const recipeProducts = recipe.resourceSpecifications;
             return (
                 <Box key={f.id} className="fields">
@@ -120,7 +120,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                     </Select>
                 </Box>
             )
-        } else if (f.fieldClass === FieldClass.AtLocation) {
+        } else if (f.fieldClass === FieldClass.Location) {
             return (
                 <Box key={f.id} className="fields">
                     <Heading size={"md"}>{`${f.field} ${required}`}</Heading>
@@ -187,7 +187,6 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
 
     const renderOutputArguments = (t: RecipeProcessWithRelation) => {
         return t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Output).map(rf => {
-            if(rf.inherits) return null
             let hideProduct = false;
             if (rf.action === ActionType.Modify) hideProduct = true;
             return (
@@ -199,7 +198,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
     }
 
     const renderFlowsInfo = (t: RecipeProcessWithRelation) => {
-        const renderOutputs = t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Output).filter(rf => !rf.inherits).length;
+        const renderOutputs = t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Output).length;
         const renderInputs = t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Input).length;
         return (
             <Tabs>

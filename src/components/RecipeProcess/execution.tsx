@@ -1,5 +1,5 @@
 import { Alert, Card, CardBody, Heading, Spinner, Text } from "@chakra-ui/react";
-import { RecipeProcessResponse, ResourceSpecification, useGetRecipeProcessesQuery } from "../../apollo/__generated__/graphql";
+import { RecipeProcessResponse, ResourceSpecification } from "../../apollo/__generated__/graphql";
 import { useState } from "react";
 import ProcessModal from "./process_modal";
 
@@ -13,12 +13,12 @@ const ProcessExecution = ({ recipeId }: Props) => {
     const [openShowProcessModal, setOpenShowProcessModal] = useState(false);
     const [selectedProcess, setSelectedProcess] = useState<RecipeProcessResponse | null>(null)
 
-    const { loading, data, error } = useGetRecipeProcessesQuery({
-        variables: {
-            recipeId
-        },
-        pollInterval: 5000
-    })
+    // const { loading, data, error } = useGetRecipeProcessesQuery({
+    //     variables: {
+    //         recipeId
+    //     },
+    //     pollInterval: 5000
+    // })
 
     const onShowProcess = (p: RecipeProcessResponse) => {
         setSelectedProcess(p);
@@ -42,25 +42,27 @@ const ProcessExecution = ({ recipeId }: Props) => {
 
     }
 
-    if (error) return <Alert status='error'>{error.message}</Alert>
-    if (loading) return <Spinner />
-    if (!data) return null;
+    return null;
 
-    const processes: Array<RecipeProcessResponse> = data.getRecipeProcesses.recipeProcesses as Array<RecipeProcessResponse>;
+    // if (error) return <Alert status='error'>{error.message}</Alert>
+    // if (loading) return <Spinner />
+    // if (!data) return null;
 
-    return (
-        <>
-            <ProcessModal 
-                process={selectedProcess}
-                recipe={data.getRecipeProcesses.recipe}
-                resources={data.getRecipeProcesses.resources as Array<ResourceSpecification>}
-                isOpen={openShowProcessModal} 
-                onClose={() => setOpenShowProcessModal(false)} />
-            <div style={{ marginTop: "3em", display: "flex" }}>
-                {renderFirstProcesses(processes)}
-            </div>
-        </>
-    )
+    // const processes: Array<RecipeProcessResponse> = data.getRecipeProcesses.recipeProcesses as Array<RecipeProcessResponse>;
+
+    // return (
+    //     <>
+    //         <ProcessModal 
+    //             process={selectedProcess}
+    //             recipe={data.getRecipeProcesses.recipe}
+    //             resources={data.getRecipeProcesses.resources as Array<ResourceSpecification>}
+    //             isOpen={openShowProcessModal} 
+    //             onClose={() => setOpenShowProcessModal(false)} />
+    //         <div style={{ marginTop: "3em", display: "flex" }}>
+    //             {renderFirstProcesses(processes)}
+    //         </div>
+    //     </>
+    // )
 }
 
 export default ProcessExecution;

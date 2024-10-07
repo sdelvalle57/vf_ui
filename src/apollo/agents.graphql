@@ -200,6 +200,7 @@ fragment RecipeFlowTemplateWithDataFieldsFragment on RecipeFlowTemplateWithDataF
   eventType
   roleType
   action
+  identifier
   groups {
     id
     name
@@ -207,12 +208,15 @@ fragment RecipeFlowTemplateWithDataFieldsFragment on RecipeFlowTemplateWithDataF
   }
   dataFields {
     id
+    recipeFlowTemplateId
+    groupId
+    fieldIdentifier
     fieldClass
     field
     fieldType
     note
     required
-    fieldIdentifier
+    flowThrough
     inherits
   }
 }
@@ -252,26 +256,6 @@ mutation CreateRecipeTemplate(
   ) {
     ...RecipeTemplateWithRecipeFlowsFragment
   }
-}
-
-mutation CreateRecipeTemplate2(
-  $identifier: String!,
-  $name: String!,
-  $recipeTemplateType: RecipeTemplateType!,
-  $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!,
-  $commitment: ActionType,
-  $fulfills: String,
-  $trigger: ActionType
-) {
-  createRecipeTemplate2(
-    identifier: $identifier,
-    name: $name,
-    recipeTemplateType: $recipeTemplateType,
-    recipeFlowTemplateArgs: $recipeFlowTemplateArgs,
-    commitment: $commitment,
-    fulfills: $fulfills,
-    trigger: $trigger
-  ) 
 }
 
 query GetTemplates {
