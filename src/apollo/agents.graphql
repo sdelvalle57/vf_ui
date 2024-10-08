@@ -8,6 +8,18 @@ query AllAgents {
   }
 }
 
+query GetAgentsWithLocation {
+  agentsWithLocation {
+    id
+    name
+    locations {
+      id
+      name
+      value
+    }
+  }
+}
+
 mutation CreateAgent($name: String!, $note: String) {
   createAgent(name: $name, note: $note) {
     id
@@ -72,6 +84,29 @@ query EconomicResourcesBySpecificationId($resourceSpecificationId: Uuid!) {
     id
     name
     resourceSpecificationId
+    note
+    accountingQuantity
+    onHandQuantity
+    trackingIdentifier
+    currentLocation
+    lot
+    containedIn
+    createdAt
+    referenceNumber
+  }
+}
+
+query EconomicResourcesByAgentId($agentId: Uuid!) {
+  economicResourcesByAgentId(agentId: $agentId) {
+    id
+    resourceSpecification {
+      id
+      agentId
+      name
+      note
+      createdAt
+    }
+    name
     note
     accountingQuantity
     onHandQuantity
@@ -305,89 +340,3 @@ mutation CreateLocation($agentId: Uuid!, $name: String!, $value: String!) {
     value
   }
 }
-
-# # Get recipe processes
-# query GetRecipeProcesses($recipeId: Uuid!) {
-#   getRecipeProcesses(recipeId: $recipeId) {
-#     recipe {
-#       id
-#       agentId
-#       name
-#       note
-#       createdAt
-#     }
-#     resources {
-#       id
-#       name
-#       note
-#       resourceType
-#       unitOfMeasure
-#     }
-#     recipeProcesses {
-#       id
-#       name
-#       recipeType
-#       identifier
-#       outputOf
-#       processFlows {
-#         id
-#         eventType
-#         roleType
-#         action
-#         dataFields {
-#           id
-#           recipeProcessFlowId
-#           recipeFlowTemplateDataFieldId
-#           fieldIdentifier
-#           fieldClass
-#           field
-#           fieldType
-#           note
-#           required
-#           defaultValue
-#           flowThrough
-#         }
-#       }
-#     }
-#   }
-# }
-
-
-# # Create recipe processes
-# mutation CreateRecipeProcesses($recipeId: Uuid!, $data: [RecipeProcessWithRelation!]!) {
-#   createRecipeProcesses(recipeId: $recipeId, data: $data) {
-#     recipe {
-#       id
-#       agentId
-#       name
-#       note
-#       createdAt
-#     }
-#     recipeProcesses {
-#       id
-#       name
-#       recipeType
-#       identifier
-#       outputOf
-#       processFlows {
-#         id
-#         eventType
-#         roleType
-#         action
-#         dataFields {
-#           recipeProcessFlowId
-#           recipeFlowTemplateDataFieldId
-#           fieldIdentifier
-#           fieldClass
-#           field
-#           fieldType
-#           note
-#           required
-#           defaultValue
-#           flowThrough
-#         }
-#       }
-#     }
-#   }
-# }
-

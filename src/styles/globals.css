@@ -59,7 +59,7 @@ a {
 }
 
 #chakra-modal-view_process_modal {
-  max-width: 40%;
+  max-width: 50%;
 }
 
 .fields {
@@ -67,6 +67,11 @@ a {
   border-color: rgb(26, 32, 44);
   border-style: solid;
   box-sizing: border-box;
+  margin: 16px;
+  padding: 20px;
+}
+
+.field-group {
   margin: 16px;
   padding: 20px;
 }

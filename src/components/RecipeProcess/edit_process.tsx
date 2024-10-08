@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { ActionType, FieldClass, FieldType, Location, RecipeFlowDataFieldInput, RecipeFlowTemplateDataFieldInput, RecipeFlowWithDataFields, RecipeProcessWithRelation, RecipeWithRecipeFlows, RecipeWithResources, RoleType, useLocationsByAgentQuery } from "../../apollo/__generated__/graphql";
+import { ActionType, FieldClass, FieldType, Location, RecipeFlowDataFieldInput, RecipeFlowTemplateDataFieldInput, RecipeFlowTemplateGroupDataField, RecipeFlowWithDataFields, RecipeProcessWithRelation, RecipeWithRecipeFlows, RecipeWithResources, RoleType, useLocationsByAgentQuery } from "../../apollo/__generated__/graphql";
 import { Alert, Box, Button, Heading, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
+import GroupsComponent from "./groups";
 
 
 interface Props {
@@ -13,12 +14,18 @@ interface Props {
     onEditedProcess: (t: RecipeProcessWithRelation) => void
 }
 
+export interface Group {
+    data: RecipeFlowTemplateGroupDataField,
+    data_fields: Array<RecipeFlowDataFieldInput>
+}
+
 
 const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProcess }: Props) => {
     const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
 
     const [editedProcess, setEditedProcess] = useState<RecipeProcessWithRelation | null>(process)
-    const [locations, setLocations] = useState<Array<Location>>([]);
+    const [inputGroups, setInputGroups] = useState<Array<Group>>([])
+    const [outputGroups, setOutputGroups] = useState<Array<Group>>([])
 
     const { loading, data, error } = useLocationsByAgentQuery({
         variables: { agentId: selectedAgent?.id || '' },  // Pass empty string or a default value if selectedAgent is null
@@ -26,28 +33,66 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         pollInterval: 5000  // Skip the query if selectedAgent is null
     });
 
+
+
+
     useEffect(() => {
-        if (data?.locationsByAgent) {
-            setLocations(data.locationsByAgent);
+        if (process) {
+            setEditedProcess(process);
+    
+            // Create a copy of groups outside the loop
+            
+            let updatedInputGroups = [...inputGroups];
+            let updatedOutputGroups = [...outputGroups];
+
+            const rfInputs = process.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Input);
+            const rfOutputs = process.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Output);
+
+            const newInputGroups = getGroups(rfInputs, updatedInputGroups);
+            const newOutputGroups = getGroups(rfOutputs, updatedOutputGroups);
+    
+            // Update groups state once, after all modifications
+            setInputGroups(newInputGroups);
+            setOutputGroups(newOutputGroups);
         }
-    }, [data]);
+    }, [process]);
 
+    const getGroups = (rf: Array<RecipeFlowWithDataFields>, groups: Array<Group>): Array<Group> => {
+        rf.forEach(rf => {
+            rf.dataFields.forEach(df => {
+                if (df.groupId) {
+                    // Find and filter the group by groupId
+                    let group = groups.find(g => g.data.id === df.groupId);
 
-    useEffect(() => {
-        if (process) setEditedProcess(process)
-    }, [process])
-
-    console.log(process)
-
+                    if (group) {
+                        if(!group.data_fields.find(d => d.id === df.id)) {
+                            group = { ...group, data_fields: [...group.data_fields, df] };
+                        }
+                        groups = groups.filter(g => g && g.data.id !== df.groupId).concat(group);
+                    } else {
+                        // If group doesn't exist, create a new group
+                        const data = rf.groups.find(g => g.id === df.groupId);
+                        if(data) {
+                            const newGroup: Group = {
+                                data,
+                                data_fields: [df]
+                            };
+                            groups.push(newGroup);
+                        }
+                        
+                    }
+                }
+            });
+        });
+        return groups;
+    }
 
     const handleChange = (
         rf: RecipeFlowWithDataFields,
         data_field: RecipeFlowDataFieldInput,
         defaultValue: string
     ) => {
-        console.log(defaultValue)
         if (editedProcess) {
-            // Update the data fields of the recipe flow
             const updatedDataFields = rf.dataFields.map((df) => {
                 if (df.id === data_field.id) {
                     // Return a new object with the updated defaultValue
@@ -56,10 +101,9 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                         defaultValue: defaultValue, // Update the defaultValue
                     };
                 }
-                return df; // Keep the other fields unchanged
+                return df; 
             });
 
-            // Create a new object for rf with the updated data fields
             const updatedRecipeFlow: RecipeFlowWithDataFields = {
                 ...rf,
                 dataFields: updatedDataFields,
@@ -125,7 +169,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                 <Box key={f.id} className="fields">
                     <Heading size={"md"}>{`${f.field} ${required}`}</Heading>
                     <Text size={"sm"}>{f.note}</Text>
-                    {
+                    {/* {
                         locations ? (
                             <Select 
                                 onChange={({ target }) => handleChange(rf, f, target.value)} 
@@ -140,7 +184,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
                                 }
                             </Select>
                         ) : <Alert status="warning">No Locations found for Agent</Alert>
-                    }
+                    } */}
                 </Box>
             )
         }
@@ -165,13 +209,15 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
     }
 
     const renderFields = (rf: RecipeFlowWithDataFields, hideProduct?: boolean) => {
-        return rf.dataFields.map((f) => {
-            if (f.fieldType === FieldType.Select) return renderSelectComponent(f, rf, hideProduct)
-            else if (f.fieldType === FieldType.Number) return renderInputComponent(f, rf)
-            else if (f.fieldType === FieldType.Date) return renderInputComponent(f, rf)
-            else if (f.fieldType === FieldType.Text) return renderInputComponent(f, rf)
-            return null
-        })
+        return rf.dataFields
+            .filter(f => !f.groupId)
+            .map((f) => {
+                if (f.fieldType === FieldType.Select) return renderSelectComponent(f, rf, hideProduct)
+                else if (f.fieldType === FieldType.Number) return renderInputComponent(f, rf)
+                else if (f.fieldType === FieldType.Date) return renderInputComponent(f, rf)
+                else if (f.fieldType === FieldType.Text) return renderInputComponent(f, rf)
+                return null
+            })
     }
 
 
@@ -179,6 +225,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
         return t.recipeProcess.recipeFlows.filter(rf => rf.roleType === RoleType.Input).map(rf => {
             return (
                 <div key={rf.id}>
+                    <GroupsComponent groups={inputGroups} recipe={recipe} />
                     {renderFields(rf)}
                 </div>
             )
@@ -191,6 +238,7 @@ const EditProcessComponent = ({ isOpen, onClose, process, recipe, onEditedProces
             if (rf.action === ActionType.Modify) hideProduct = true;
             return (
                 <div key={rf.id}>
+                    <GroupsComponent groups={outputGroups} recipe={recipe} />
                     {renderFields(rf, hideProduct)}
                 </div>
             )

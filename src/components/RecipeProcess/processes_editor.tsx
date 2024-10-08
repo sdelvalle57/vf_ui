@@ -15,9 +15,6 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
     const [selectedProcess, setSelectedProcess] = useState<RecipeProcessWithRelation | null>(null)
     const [processes, setProcesses] = useState<Array<RecipeProcessWithRelation>>([])
 
-    console.log(recipe)
-    console.log(processes)
-
 
     // const [createRecipeProcesses, { loading, error }] = useCreateRecipeProcessesMutation({
     //     onCompleted: async (data) => {
@@ -43,10 +40,8 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
     //     }
     // }, [error])
 
-    console.log(processes)
 
     const onAddProcess = (template: RecipeTemplateWithRecipeFlows) => {
-        console.log(template)
         const lastTemplate = processes[processes.length - 1];
         const recipeProcessRelation: RecipeProcessWithRelation = {
             outputOf: lastTemplate?.recipeProcess ? [lastTemplate.recipeProcess] : [],
