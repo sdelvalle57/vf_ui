@@ -6,7 +6,6 @@ import {
   FieldClass,
   RecipeFlowTemplateArg,
   RecipeFlowTemplateDataFieldArg,
-  RecipeTemplateType,
   RoleType,
   FlowThrough,
   FieldGroupClass
@@ -49,7 +48,6 @@ interface Event {
 
 // JsonSchema interface
 interface JsonSchema {
-  type: RecipeTemplateType;
   name: string;
   id: string;
   fulfills?: string;
@@ -97,7 +95,6 @@ const eventSchema = z.object({
 
 // Schema for the entire JSON
 const jsonSchema = z.object({
-  type: z.nativeEnum(RecipeTemplateType),
   name: z.string(),
   id: z.string(),
   commitment: z.nativeEnum(ActionType).optional(),

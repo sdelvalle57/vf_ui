@@ -284,6 +284,38 @@ mutation CreateMapTemplate(
   }
 }
 
+query GetMapTemplates {
+  getMapTemplates {
+    map {
+      id
+      name
+      type
+    }
+    templates {
+      ...RecipeTemplateWithRecipeFlowsFragment
+    }
+  }
+}
+
+query GetMapTemplateById($mapId: Uuid!) {
+  getMapTemplateById(mapId: $mapId) {
+    map {
+      id
+      name
+      type
+    }
+    templates {
+      ...RecipeTemplateWithRecipeFlowsFragment
+    }
+  }
+}
+
+query getTemplatesByMapId($mapId: Uuid!) {
+  getTemplatesByMapId(mapId: $mapId) {
+    ...RecipeTemplateWithRecipeFlowsFragment
+  }
+}
+
 mutation CreateRecipeTemplate(
   $mapTemplateId: Uuid!,
   $identifier: String!,

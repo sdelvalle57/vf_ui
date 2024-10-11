@@ -1,109 +1,86 @@
-import { Alert, AlertDescription, Box, Button, CloseButton, FormControl, FormLabel, Textarea, useToast } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Select, useToast } from "@chakra-ui/react";
+import { TemplateType, useCreateMapTemplateMutation } from "../../apollo/__generated__/graphql";
 import { useState } from "react";
-import { parseRecipeFlows, parseJson } from "./parser";
-import { useCreateRecipeTemplateMutation } from "../../apollo/__generated__/graphql";
 
-const NewTemplate = () => {
-    // Correct order: [state, setState]
-    const [jsonDocument, setJsonDocument] = useState('')
-    const [error, setError] = useState<string | null>(null)
+
+const NewMapTemplate = () => {
+
+    const [name, setName] = useState('');
+    const [templateType, setTemplateType] = useState<TemplateType>(TemplateType.Fda);
+
     const toast = useToast();
 
-    const [createRecipeTemplate, { loading, error: createError }] = useCreateRecipeTemplateMutation({
+    const [createMapTemplate, { loading, error }] = useCreateMapTemplateMutation({
         onCompleted: (data) => {
             toast({
-                title: "Recipe template created.",
-                description: `Recipe ${data.createRecipeTemplate.name} was successfully created.`,
+                title: "Map template created.",
+                description: `Map Template ${data.createMapTemplate.name} was successfully created.`,
                 status: "success",
                 duration: 5000,
                 isClosable: true,
             });
-            setJsonDocument('');
+            setName('');
         },
-        onError: (e) => {
-            setError(e.message)
-        }
     });
 
-    const setJsonDocumentValue = (val: string) => {
-        setJsonDocument(val);
-        setError(null)
-    }
 
-    const handleJSON = async (event: React.FormEvent) => {
-        event.preventDefault();
-        // You can handle the JSON document here
-        
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
         try {
-            const doc = parseJson(jsonDocument)
-
-            console.log({
+            await createMapTemplate({
                 variables: {
-                    identifier: doc.id,
-                    commitment: doc.commitment,
-                    fulfills: doc.fulfills,
-                    name: doc.name,
-                    recipeTemplateType: doc.type,
-                    trigger: doc.trigger,
-                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
-                },
-            })
-           
-            await createRecipeTemplate({
-                variables: {
-                    identifier: doc.id,
-                    commitment: doc.commitment,
-                    fulfills: doc.fulfills,
-                    name: doc.name,
-                    recipeTemplateType: doc.type,
-                    trigger: doc.trigger,
-                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
+                    name,
+                    type: templateType,
                 },
             });
-        } catch (e: any) {
-            console.log(e)
-            setError(e.message)
+        } catch (err: any) {
+            toast({
+                title: "An error occurred.",
+                description: err.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
         }
-    }
-
-    if (error) {
-        return (
-            <Alert status='success'>
-                <Box>
-                    <AlertDescription>{error}</AlertDescription>
-                </Box>
-                <CloseButton
-                    alignSelf='flex-start'
-                    position='relative'
-                    right={-1}
-                    top={-1}
-                    onClick={() => setError(null)}
-                />
-            </Alert>
-        )
-    }
-
-
+    };
 
 
     return (
-        <Box className="json_file" maxWidth="400px" mx="auto" mt="5">
-            <form onSubmit={handleJSON}>
-                <FormControl id="note" mt={4} display="flex" flexDirection="column" flex="1">
-                    <FormLabel>Enter JSON File</FormLabel>
-                    <Textarea
-                        placeholder="Enter JSON here"
-                        value={jsonDocument}
-                        onChange={(e) => setJsonDocumentValue(e.target.value)}
-                        flex="1"
+        <Box maxWidth="400px" mx="auto" mt="5">
+            <form onSubmit={handleSubmit}>
+                <FormControl id="name" isRequired mt={4}>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                        placeholder="Enter recipe name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                     />
                 </FormControl>
-                <Button mt={4} colorScheme="teal" type="submit">
-                    Create Template
+
+                <FormControl isRequired style={{ marginTop: "2em" }}>
+                    <FormLabel>Template Type</FormLabel>
+                    <Select
+                        value={templateType}
+                        onChange={(e) => setTemplateType(e.target.value as TemplateType)} >
+                        <option value={TemplateType.Fda}>FDA</option>
+                        <option value={TemplateType.Custom}>Custom</option>
+                    </Select>
+                </FormControl>
+
+
+                <Button
+                    mt={4}
+                    colorScheme="teal"
+                    isLoading={loading}
+                    type="submit" >
+                    Create Recipe
                 </Button>
+                {error && <Box mt={4} color="red.500">Error: {error.message}</Box>}
             </form>
         </Box>
-    )
+    );
+
 }
 
-export default NewTemplate;
+export default NewMapTemplate;

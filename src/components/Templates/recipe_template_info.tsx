@@ -58,7 +58,6 @@ const RecipeTemplateInfo = ({ recipeTemplate }: Props) => {
                 <CardBody>
                     <Stack mt='6' spacing='3'>
                         <Heading size='md'>{recipeTemplate.name}</Heading>
-                        <Text>{recipeTemplate.recipeTemplateType}</Text>
                         {
                             recipeTemplate.commitment && <Text>{recipeTemplate.commitment}</Text>
                         }
@@ -71,8 +70,6 @@ const RecipeTemplateInfo = ({ recipeTemplate }: Props) => {
 
             <Accordion style={{ maxWidth: "80%", margin: "auto" }} allowMultiple>
                 {renderItems()}
-
-
             </Accordion>
         </Box>
     )

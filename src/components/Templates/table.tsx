@@ -6,11 +6,11 @@ import { RootState } from "../../redux/rootReducer";
 import { useEffect } from "react";
 
 interface RecipeTemplatesProps {
-    recipes: Array<RecipeTemplateWithRecipeFlows>;
+    templates: Array<RecipeTemplateWithRecipeFlows>;
     noAction?: boolean
 }
 
-const RecipeTemplatesTable = ({ recipes, noAction }: RecipeTemplatesProps) => {
+const RecipeTemplatesTable = ({ templates, noAction }: RecipeTemplatesProps) => {
     const router = useRouter();
     const toast = useToast();
     const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
@@ -85,16 +85,14 @@ const RecipeTemplatesTable = ({ recipes, noAction }: RecipeTemplatesProps) => {
                             <Tr >
                                 <Th>ID</Th>
                                 <Th>Name</Th>
-                                <Th>Type</Th>
                                 <Th>Action</Th>
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {recipes.map((r) => (
+                            {templates.map((r) => (
                                 <Tr key={r.id} >
                                     <Td>{r.id}</Td>
                                     <Td>{r.name}</Td>
-                                    <Td>{r.recipeTemplateType}</Td>
                                     <Td>
                                         <Button colorScheme="teal" onClick={() => onViewClick(r.id)} style={{ marginRight: "1em" }}>View</Button>
                                         {getAssignButton(r.id)}

@@ -1,8 +1,10 @@
 import { Alert,  Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import { RecipeTemplateWithRecipeFlows, useGetTemplatesQuery } from "../../apollo/__generated__/graphql"
 import { useEffect, useState } from "react";
-import NewTemplate from "./new";
+import NewTemplate from "./new_template";
 import RecipeTemplatesTable from "./table";
+import NewMapTemplate from "./new";
+import MapTemplateTables from "./map_templates_table";
 
 
 const RecipeTemplatesComponent = () => {
@@ -33,8 +35,8 @@ const RecipeTemplatesComponent = () => {
                     </TabList>
     
                     <TabPanels>
-                        <TabPanel><RecipeTemplatesTable recipes={recipeTemplates} /></TabPanel>
-                        <TabPanel><NewTemplate /></TabPanel>
+                        <TabPanel><MapTemplateTables /></TabPanel>
+                        <TabPanel><NewMapTemplate /></TabPanel>
                     </TabPanels>
                 </Tabs>
             </div>
