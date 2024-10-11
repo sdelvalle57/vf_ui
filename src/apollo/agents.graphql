@@ -253,37 +253,50 @@ fragment RecipeFlowTemplateWithDataFieldsFragment on RecipeFlowTemplateWithDataF
     required
     flowThrough
     inherits
+    acceptDefault
   }
 }
 
 fragment RecipeTemplateWithRecipeFlowsFragment on RecipeTemplateWithRecipeFlows {
   id
-    name
-    recipeTemplateType
-    identifier
-    commitment
-    fulfills
-    trigger
-    recipeFlows {
-      ...RecipeFlowTemplateWithDataFieldsFragment
-    }
+  mapTemplateId
+  name
+  identifier
+  commitment
+  fulfills
+  trigger
+  recipeFlows {
+    ...RecipeFlowTemplateWithDataFieldsFragment
+  }
 }
 
-
+mutation CreateMapTemplate(
+  $name: String!,
+  $type: TemplateType!
+) {
+  createMapTemplate(
+    name: $name,
+    type: $type
+  ) {
+    id
+    name
+    type
+  }
+}
 
 mutation CreateRecipeTemplate(
+  $mapTemplateId: Uuid!,
   $identifier: String!,
   $name: String!,
-  $recipeTemplateType: RecipeTemplateType!,
   $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!,
   $commitment: ActionType,
   $fulfills: String,
   $trigger: ActionType
 ) {
   createRecipeTemplate(
+    mapTemplateId: $mapTemplateId,
     identifier: $identifier,
     name: $name,
-    recipeTemplateType: $recipeTemplateType,
     recipeFlowTemplateArgs: $recipeFlowTemplateArgs,
     commitment: $commitment,
     fulfills: $fulfills,

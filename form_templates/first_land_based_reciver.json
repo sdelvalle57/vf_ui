@@ -1,7 +1,7 @@
 {
     "type": "FDA",
-    "name": "Harvesting2",
-    "id": "Harvesting2",
+    "name": "First Land Based Receiver",
+    "id": "FirstLandBasedReceiver",
     "events": [
         {
             "type": "ECONOMIC_EVENT",
@@ -52,7 +52,7 @@
                 {
                     "id": "AGENT_2",
                     "class": "AGENT",
-                    "field": "Receiver Company",
+                    "field": "Land Based Receiver Company",
                     "type": "SELECT",
                     "description": "Company immediate subsequent receiver",
                     "form-required": true,
@@ -62,16 +62,35 @@
                 {
                     "id": "LOCATION_2",
                     "class": "LOCATION",
-                    "field": "Location immediate subsequent receiver",
+                    "field": "Land Based Receiver Location",
                     "type": "SELECT",
-                    "description": "Location immediate subsequent receiver",
+                    "description": "Land Based Receiver Location",
+                    "form-required": true,
+                    "accept-default": true
+                },
+                {
+                    "id": "AGENT_3",
+                    "class": "AGENT",
+                    "field": "Recipent Company",
+                    "type": "SELECT",
+                    "description": "Company immediate subsequent receiver",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
+                },
+                {
+                    "id": "LOCATION_3",
+                    "class": "LOCATION",
+                    "field": "Recipient Location",
+                    "type": "SELECT",
+                    "description": "Land Based Receiver Location",
                     "form-required": true,
                     "accept-default": true
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
                     "class": "HAS_POINT_IN_TIME",
-                    "field": "Harvest Date",
+                    "field": "Landing Date",
                     "type": "DATE",
                     "description": "Date when the food was harvested",
                     "form-required": true,
@@ -85,6 +104,43 @@
                     "type": "TEXT",
                     "description": "Process notes",
                     "form-required": false,
+                    "accept-default": false
+                },
+                {
+                    "id": "NOTE_1",
+                    "class": "NOTE",
+                    "field": "Notes",
+                    "type": "TEXT",
+                    "description": "Process notes",
+                    "form-required": false,
+                    "accept-default": false
+                },
+                {
+                    "id": "REFERENCE_DOCUMENT_TYPE_1",
+                    "class": "REFERENCE_DOCUMENT_TYPE",
+                    "field": "Reference Document Type",
+                    "type": "TEXT",
+                    "description": "Document Reference Type",
+                    "form-required": true,
+                    "accept-default": true
+                },
+                {
+                    "id": "REFERENCE_DOCUMENT_NUMBER_1",
+                    "class": "REFERENCE_DOCUMENT_NUMBER",
+                    "field": "Reference Document Number",
+                    "type": "TEXT",
+                    "description": "Document Reference Number",
+                    "form-required": true,
+                    "accept-default": false
+                },
+                {
+                    "id": "TRACKING_IDENTIFIER_1",
+                    "class": "TRACKING_IDENTIFIER",
+                    "field": "Lot Code",
+                    "type": "TEXT",
+                    "description": "Assigned Traceability Lot Code",
+                    "form-required": true,
+                    "flow-through": "EXTERNAL",
                     "accept-default": false
                 }
             ],
@@ -100,9 +156,19 @@
                     "fields": ["AGENT_1, LOCATION_1"]
                 },
                 {
-                    "name": "Location Immediate Subsequent Receiver",
+                    "name": "land Based Receiver Location",
                     "class": "LOCATION",
                     "fields": ["AGENT_2, LOCATION_2"]
+                },
+                {
+                    "name": "Recipient Location",
+                    "class": "LOCATION",
+                    "fields": ["AGENT_3, LOCATION_3"]
+                },
+                {
+                    "name": "Document Reference",
+                    "class": "REFERENCE_DOCUMENT",
+                    "fields": ["AGENT_3, LOCATION_3"]
                 }
             ]
         }

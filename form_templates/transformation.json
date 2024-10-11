@@ -15,7 +15,8 @@
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being transformed, linked to commodity and variety",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "ECONOMIC_RESOURCE_1",
@@ -23,7 +24,8 @@
                     "field": "Product Reference",
                     "type": "SELECT",
                     "description": "Product reference number",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "QUANTITY_1",
@@ -31,7 +33,35 @@
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food being transformed",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
+                },
+                {
+                    "id": "RESOURCE_SPECIFICATION_2",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "field": "Product",
+                    "type": "SELECT",
+                    "description": "Product being transformed, linked to commodity and variety",
+                    "form-required": true,
+                    "accept-default": true
+                },
+                {
+                    "id": "ECONOMIC_RESOURCE_2",
+                    "class": "ECONOMIC_RESOURCE",
+                    "field": "Product Reference",
+                    "type": "SELECT",
+                    "description": "Product reference number",
+                    "form-required": true,
+                    "accept-default": true
+                },
+                {
+                    "id": "QUANTITY_2",
+                    "class": "QUANTITY",
+                    "field": "Quantity",
+                    "type": "NUMBER",
+                    "description": "Quantity of food being transformed",
+                    "form-required": true,
+                    "accept-default": false
                 },
                 {
                     "id": "AGENT_1",
@@ -40,7 +70,8 @@
                     "type": "SELECT",
                     "description": "Name of the company that cooled the food",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "LOCATION_1",
@@ -49,7 +80,8 @@
                     "type": "SELECT",
                     "description": "Name of the location where the food is cooled",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
@@ -58,7 +90,8 @@
                     "type": "DATE",
                     "description": "Date when the food entered cooling station",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": false
                 },
                 {
                     "id": "NOTE_1",
@@ -66,7 +99,8 @@
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": false
                 }
             ],
             "groups": [
@@ -74,6 +108,11 @@
                     "name": "Product",
                     "class": "ECONOMIC_RESOURCE",
                     "fields": ["RESOURCE_SPECIFICATION_1", "ECONOMIC_RESOURCE_1", "QUANTITY_1"]
+                },
+                {
+                    "name": "Product2",
+                    "class": "ECONOMIC_RESOURCE",
+                    "fields": ["RESOURCE_SPECIFICATION_2", "ECONOMIC_RESOURCE_2", "QUANTITY_2"]
                 },
                 {
                     "name": "Transform Location",
@@ -94,7 +133,8 @@
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product produced, linked to commodity and variety",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "QUANTITY_2",
@@ -102,7 +142,8 @@
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food produced",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_2",
@@ -110,7 +151,8 @@
                     "field": "Production Date",
                     "type": "DATE",
                     "description": "Date when the food got produced",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
                 },
                 {
                     "id": "NOTE_2",
@@ -118,7 +160,8 @@
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": false
                 },
                 {
                     "id": "TRACKING_IDENTIFIER_2",
@@ -126,7 +169,8 @@
                     "field": "Lot Code",
                     "type": "TEXT",
                     "description": "Assigned Traceability Lot Code",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
                 }
             ],
             "groups": [

@@ -18,7 +18,8 @@
                     "type": "SELECT",
                     "description": "Product being received, linked to commodity and variety",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "QUANTITY_1",
@@ -27,7 +28,8 @@
                     "type": "NUMBER",
                     "description": "Quantity of food being shipped",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": false
                 },
                 {
                     "id": "AGENT_1",
@@ -36,7 +38,8 @@
                     "type": "SELECT",
                     "description": "Name of the company that received the food",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "LOCATION_1",
@@ -45,7 +48,8 @@
                     "type": "SELECT",
                     "description": "Name of the location where the food is received",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
@@ -54,7 +58,8 @@
                     "type": "DATE",
                     "description": "Date when the food is being shipped",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": false
                 },
                 {
                     "id": "NOTE_1",
@@ -62,7 +67,8 @@
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": false
                 }
             ],
             "groups": [

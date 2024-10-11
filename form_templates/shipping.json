@@ -17,7 +17,8 @@
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being shipped, linked to commodity and variety",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "ECONOMIC_RESOURCE_1",
@@ -25,7 +26,8 @@
                     "field": "Product Reference",
                     "type": "SELECT",
                     "description": "Product reference number",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "QUANTITY_1",
@@ -33,7 +35,8 @@
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food being shipped",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
                 },
                 {
                     "id": "AGENT_1",
@@ -42,7 +45,8 @@
                     "type": "SELECT",
                     "description": "Name of the company that cooled the food",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "LOCATION_1",
@@ -51,7 +55,8 @@
                     "type": "SELECT",
                     "description": "Name of the location where the food is cooled",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "AGENT_2",
@@ -60,7 +65,8 @@
                     "type": "SELECT",
                     "description": "Name of the company that receives the food",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "LOCATION_2",
@@ -69,7 +75,8 @@
                     "type": "SELECT",
                     "description": "Name of the location where the food is being shipped",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
@@ -78,7 +85,8 @@
                     "type": "DATE",
                     "description": "Date when the food is being shipped",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": false
                 },
                 {
                     "id": "NOTE_1",
@@ -86,7 +94,8 @@
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": false
                 }
             ],
             "groups": [

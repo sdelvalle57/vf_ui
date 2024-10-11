@@ -26,6 +26,7 @@ interface EventValue {
   description: string;
   "form-required": boolean;
   "flow-through"?: FlowThrough; 
+  "accept-default": boolean,
   inherits?: FieldInheritance
 }
 
@@ -72,6 +73,7 @@ const eventValueSchema = z.object({
   description: z.string(),
   "form-required": z.boolean(),
   "flow-through": z.nativeEnum(FlowThrough).optional(), 
+  "accept-default": z.boolean(),
   inherits: fieldInheritanceSchema.optional()
 });
 
@@ -139,6 +141,7 @@ const buildDataFields = (values: Array<EventValue>): Array<RecipeFlowTemplateDat
       note: v.description || "", // Use description as note
       required: v["form-required"], // Required field
       flowThrough: v["flow-through"],
+      acceptDefault: v["accept-default"],
       inherits: v.inherits && {
         field: v.inherits.field,
         identifier: v.inherits.id

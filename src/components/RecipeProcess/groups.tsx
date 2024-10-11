@@ -1,5 +1,5 @@
-import { Box, Grid, GridItem, Heading, Input, Select, Text } from "@chakra-ui/react";
-import { AgentLocation, AgentWithLocations, EconomicResourcesByAgentIdQuery, EconomicResourceWithSpec, FieldClass, FieldGroupClass, FieldType, RecipeFlowDataFieldInput, RecipeWithResources, useEconomicResourcesByAgentIdQuery, useGetAgentsWithLocationQuery } from "../../apollo/__generated__/graphql";
+import { Box, Grid, GridItem, Heading, Input, Select } from "@chakra-ui/react";
+import { AgentLocation, AgentWithLocations, EconomicResourceWithSpec, FieldClass, FieldGroupClass, FieldType, RecipeFlowDataFieldInput, RecipeWithResources, useEconomicResourcesByAgentIdQuery, useGetAgentsWithLocationQuery } from "../../apollo/__generated__/graphql";
 import { Group } from "./edit_process";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -62,10 +62,6 @@ const GroupsComponent = ({ recipe, groups }: Props) => {
                 </div>
             </Box>
         )
-    }
-
-    const renderEconomicResource = (g: Group) => {
-
     }
 
 

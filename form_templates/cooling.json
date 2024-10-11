@@ -15,7 +15,8 @@
                     "field": "Product",
                     "type": "SELECT",
                     "description": "Product being cooled, linked to commodity and variety",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "ECONOMIC_RESOURCE_1",
@@ -23,7 +24,8 @@
                     "field": "Product Reference",
                     "type": "SELECT",
                     "description": "Product reference number",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": true
                 },
                 {
                     "id": "QUANTITY_1",
@@ -31,7 +33,8 @@
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food being cooled",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
                 },
                 {
                     "id": "AGENT_1",
@@ -40,7 +43,8 @@
                     "type": "SELECT",
                     "description": "Name of the company that cooled the food",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "LOCATION_1",
@@ -49,7 +53,8 @@
                     "type": "SELECT",
                     "description": "Name of the location where the food is cooled",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": true
                 },
                 {
                     "id": "HAS_POINT_IN_TIME_1",
@@ -58,7 +63,8 @@
                     "type": "DATE",
                     "description": "Date when the food entered cooling station",
                     "form-required": true,
-                    "flow-through": "EXTERNAL"
+                    "flow-through": "EXTERNAL",
+                    "accept-default": false
                 },
                 {
                     "id": "NOTE_1",
@@ -66,7 +72,8 @@
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": false
                 }
             ],
             "groups": [
@@ -95,6 +102,7 @@
                     "type": "SELECT",
                     "description": "Product being cooled, linked to commodity and variety",
                     "form-required": true,
+                    "accept-default": false,
                     "inherits": {
                         "id": "ACCEPT_1",
                         "field": "RESOURCE_SPECIFICATION_1"
@@ -106,7 +114,8 @@
                     "field": "Quantity",
                     "type": "NUMBER",
                     "description": "Quantity of food cooled",
-                    "form-required": true
+                    "form-required": true,
+                    "accept-default": false
                 },
                 {
                     "id": "NOTE_2",
@@ -114,7 +123,8 @@
                     "field": "Notes",
                     "type": "TEXT",
                     "description": "Process notes",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": false
                 },
                 {
                     "id": "CUSTOM_1",
@@ -122,7 +132,8 @@
                     "field": "Temperature",
                     "type": "TEXT",
                     "description": "Average Temperature",
-                    "form-required": false
+                    "form-required": false,
+                    "accept-default": true
                 }
             ],
             "groups": [
