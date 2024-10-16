@@ -10,6 +10,7 @@
             "action": "ACCEPT",
             "id": "ACCEPT_R_1",
             "role": "INPUT",
+            "interactions": 1,
             "values": [
                 {
                     "id": "RESOURCE_SPECIFICATION_1",

@@ -10,6 +10,7 @@
             "action": "LOAD",
             "id": "LOAD_S_1",
             "role": "INPUT",
+            "interactions": 1,
             "values": [
                 {
                     "id": "RESOURCE_SPECIFICATION_1",

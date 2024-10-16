@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import ReactFlow, { Background, Controls, Node, Edge, useReactFlow, Handle, Position } from 'reactflow';
+import ReactFlow, { Background, Controls, Node, Edge, Handle, Position, applyNodeChanges, NodeChange, useReactFlow, Panel, ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Box, Button, Flex, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from '@chakra-ui/react';
-import { RecipeTemplateWithRecipeFlows } from '../apollo/__generated__/graphql';
-import { ArrowBackIcon, CloseIcon, AddIcon } from '@chakra-ui/icons';
+import { RecipeTemplateWithRecipeFlows, RoleType } from '../apollo/__generated__/graphql';
+import { CloseIcon, AddIcon, CheckCircleIcon } from '@chakra-ui/icons';
 
 interface Props {
     templates: Array<RecipeTemplateWithRecipeFlows>;
+    inputs: Array<RecipeTemplateWithRecipeFlows>;
+    outputs: Array<RecipeTemplateWithRecipeFlows>;
+}
+
+enum NodeType {
+    INPUT, 
+    OUTPUT
 }
 
 const CustomNode = ({ id, data }: any) => {
-    const { setNodes } = data;
+    const { onNodeDelete, role, templateId } = data;
 
     const handleDelete = () => {
-        setNodes((nds: Node[]) => nds.filter((node) => node.id !== id));
+        onNodeDelete(role, templateId)
     };
 
     return (
-        <Box position="relative" padding="1em" border="1px solid #ccc" borderRadius="8px" bg="white" shadow="md">
+        <Box position="relative" padding="1em" border="1px solid #ccc" borderRadius="8px" bg="white" shadow="md" maxWidth="200px">
             <Box position="absolute" top="-10px" right="-10px">
                 <IconButton
                     icon={<CloseIcon />}
@@ -26,15 +33,15 @@ const CustomNode = ({ id, data }: any) => {
                     onClick={handleDelete}
                 />
             </Box>
-            <div>{data.label}</div>
+            <div style={{textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap"}}>{data.label}</div>
             <Handle type="target" position={Position.Top} />
             <Handle type="source" position={Position.Bottom} />
         </Box>
     );
 };
 
-const CentralCustomNode = ({ id, data }: any) => {
-    const { setNodes, onOpen } = data;
+const CentralCustomNode = ({ data }: any) => {
+    const { onOpen } = data;
 
     return (
         <Box position="relative" padding="1.5em" border="2px solid teal" borderRadius="8px" bg="white" shadow="md">
@@ -43,7 +50,7 @@ const CentralCustomNode = ({ id, data }: any) => {
                     icon={<AddIcon />}
                     size="sm"
                     aria-label="Add Input Node"
-                    onClick={() => onOpen('input')}
+                    onClick={() => onOpen(NodeType.INPUT)}
                 />
             </Box>
             <Box position="absolute" bottom="-10px" right="-10px">
@@ -51,7 +58,7 @@ const CentralCustomNode = ({ id, data }: any) => {
                     icon={<AddIcon />}
                     size="sm"
                     aria-label="Add Output Node"
-                    onClick={() => onOpen('output')}
+                    onClick={() => onOpen(NodeType.OUTPUT)}
                 />
             </Box>
             <div>{data.label}</div>
@@ -63,46 +70,66 @@ const CentralCustomNode = ({ id, data }: any) => {
 
 const nodeTypes = { customNode: CustomNode, centralCustomNode: CentralCustomNode };
 
-const TemplateRules = ({ templates }: Props) => {
+const TemplateRules = ({ templates, inputs, outputs }: Props) => {
     // State to track selected template
     const [selectedTemplate, setSelectedTemplate] = useState<RecipeTemplateWithRecipeFlows | null>(null);
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [modalType, setModalType] = useState<'input' | 'output' | null>(null);
+    const [ inputTemplates, setInputTemplates]  = useState<Array<RecipeTemplateWithRecipeFlows>>(inputs)
+    const [ outputTemplates, setOutputTemplates]  = useState<Array<RecipeTemplateWithRecipeFlows>>(outputs)
+    const [modalType, setModalType] = useState<NodeType | null>(null);
+    const [saved, setSaved]= useState<boolean>(false)
+    
 
     useEffect(() => {
+        spreadNodes()
+    }, [selectedTemplate, inputTemplates, outputTemplates]);
+
+    useEffect(() => {
+        setInputTemplates(inputs)
+        setOutputTemplates(outputs)
+        setSaved(false)
+    }, [selectedTemplate]);
+
+    const onNodeDelete = (role: NodeType, templateId: string) => {
+        if(role === NodeType.INPUT) setInputTemplates((w) => w.filter(t => t.id !== templateId))
+         else setOutputTemplates((w) => w.filter(t => t.id !== templateId))
+    };
+
+    const spreadNodes = () => {
         if (selectedTemplate) {
             // Create input nodes at the top
-            const inputNodes: Node[] = templates.map((template, index) => ({
+            const inputNodes: Node[] = inputTemplates.map((template, index) => ({
                 id: `input-${template.id}`,
                 type: 'customNode',
-                data: { label: `Input: ${template.name}`, setNodes },
-                position: { x: index * 200 + 150, y: 50 }, // Arrange inputs horizontally
+                data: { label: `${template.name}`, onNodeDelete, role: NodeType.INPUT, templateId: template.id },
+                position: { x: index * 300, y: 50 }, // Arrange inputs horizontally
             }));
 
             // Create output nodes below the central node
-            const outputNodes: Node[] = templates.map((template, index) => ({
+            const outputNodes: Node[] = outputTemplates.map((template, index) => ({
                 id: `output-${template.id}`,
                 type: 'customNode',
-                data: { label: `Output: ${template.name}`, setNodes },
-                position: { x: index * 200 + 150, y: 450 }, // Arrange outputs horizontally
+                data: { label: `${template.name}`, onNodeDelete, role: NodeType.OUTPUT, templateId: template.id },
+                position: { x: index * 300, y: 450 }, // Arrange outputs horizontally
+                draggable: true
             }));
 
             // Central node for the selected template
             const centralNode: Node = {
                 id: `center-${selectedTemplate.id}`,
                 type: 'centralCustomNode',
-                data: { label: `Selected: ${selectedTemplate.name}`, setNodes, onOpen: (type: 'input' | 'output') => {
+                data: { label: `${selectedTemplate.name}`, onOpen: (type: NodeType) => {
                     setModalType(type);
                     onOpen();
                 }},
                 position: { x: 400, y: 250 },
-                draggable: false,
+                draggable: true,
             };
 
             // Create edges for inputs pointing to the central node
-            const inputEdges: Edge[] = templates.map((template) => ({
+            const inputEdges: Edge[] = inputTemplates.map((template) => ({
                 id: `e-${template.id}-to-center`,
                 source: `input-${template.id}`,
                 target: `center-${selectedTemplate.id}`,
@@ -111,7 +138,7 @@ const TemplateRules = ({ templates }: Props) => {
             }));
 
             // Create edges for outputs pointing away from the central node
-            const outputEdges: Edge[] = templates.map((template) => ({
+            const outputEdges: Edge[] = outputTemplates.map((template) => ({
                 id: `e-center-to-${template.id}`,
                 source: `center-${selectedTemplate.id}`,
                 target: `output-${template.id}`,
@@ -122,38 +149,37 @@ const TemplateRules = ({ templates }: Props) => {
             setNodes([...inputNodes, centralNode, ...outputNodes]);
             setEdges([...inputEdges, ...outputEdges]);
         }
-    }, [selectedTemplate, templates]);
-
-    const onNodesDelete = (nodesToDelete: Node[]) => {
-        const filteredNodes = nodes.filter((node) => !nodesToDelete.find((n) => n.id === node.id));
-        setNodes(filteredNodes);
-    };
+    }
 
     const handleAddTemplate = (template: RecipeTemplateWithRecipeFlows) => {
-        if (modalType && selectedTemplate) {
-            const newNodeId = `${modalType}-${template.id}`;
-            const newNode: Node = {
-                id: newNodeId,
-                type: 'customNode',
-                data: { label: `${modalType === 'input' ? 'Input' : 'Output'}: ${template.name}`, setNodes },
-                position: modalType === 'input' ? { x: nodes.length * 200 + 150, y: 50 } : { x: nodes.length * 200 + 150, y: 450 },
-            };
-            const newEdge: Edge = {
-                id: `e-${newNodeId}-to-center`,
-                source: modalType === 'input' ? newNodeId : `center-${selectedTemplate.id}`,
-                target: modalType === 'input' ? `center-${selectedTemplate.id}` : newNodeId,
-                type: 'smoothstep',
-                animated: true,
-            };
+        if (modalType !== null && selectedTemplate) {
 
-            setNodes((prevNodes) => [...prevNodes, newNode]);
-            setEdges((prevEdges) => [...prevEdges, newEdge]);
+            if(modalType === NodeType.INPUT) {
+                if(inputTemplates.find(t => t.id === template.id)) return null;
+                setInputTemplates(w => [...w, template])
+            } else {
+                if(outputTemplates.find(t => t.id === template.id)) return null;
+                setOutputTemplates(w => [...w, template])
+            }
+            
             onClose();
         }
     };
 
+    const onNodesChange = (changes: NodeChange[]) => {
+        setNodes((nds) => {
+            return applyNodeChanges(changes, nds)
+        });
+    };
+
+    const listTemplates = modalType === NodeType.INPUT ? 
+        templates.filter(t => !inputTemplates.find(i => i.id === t.id)) :
+        templates.filter(t => !outputTemplates.find(i => i.id === t.id)) 
+
+
     return (
-        <Flex direction="column" height="100vh">
+        <ReactFlowProvider>
+        <Flex direction="column" height="50vh">
             {/* Sidebar with RecipeTemplates */}
             <Flex direction="row" flexGrow={1}>
                 <Box width="20%" padding="2em" borderRight="1px solid #ccc" overflowY="auto">
@@ -186,12 +212,24 @@ const TemplateRules = ({ templates }: Props) => {
                         nodes={nodes}
                         edges={edges}
                         nodeTypes={nodeTypes}
-                        snapToGrid={true}
-                        onNodesDelete={(evt) => onNodesDelete(evt)}
-                    >
+                        nodesConnectable={true}
+                        nodesDraggable={true}
+                        selectNodesOnDrag={true}
+                        fitView
+                        onNodesChange={onNodesChange}  >
                         <Background />
                         <Controls />
                     </ReactFlow>
+                    {
+
+                    }
+                    <Panel position='bottom-center'>
+                        {
+                            selectedTemplate ? 
+                                saved ? <CheckCircleIcon width="50px" height="50px" color={"green"} />: <Button onClick={() => setSaved(true)} colorScheme='blue'>Save</Button> :
+                                null
+                        }
+                    </Panel>
                 </Box>
             </Flex>
 
@@ -202,7 +240,7 @@ const TemplateRules = ({ templates }: Props) => {
                     <ModalHeader>Add Template</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        {templates.map((template) => (
+                        {listTemplates.map((template) => (
                             <Button
                                 key={template.id}
                                 width="100%"
@@ -215,6 +253,7 @@ const TemplateRules = ({ templates }: Props) => {
                 </ModalContent>
             </Modal>
         </Flex>
+        </ReactFlowProvider>
     );
 };
 

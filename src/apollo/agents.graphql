@@ -236,6 +236,7 @@ fragment RecipeFlowTemplateWithDataFieldsFragment on RecipeFlowTemplateWithDataF
   roleType
   action
   identifier
+  interactions
   groups {
     id
     name

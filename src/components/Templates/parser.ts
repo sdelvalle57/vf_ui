@@ -42,6 +42,7 @@ interface Event {
   id: string,
   action: ActionType;
   role: RoleType;
+  interactions?: number;
   values: Array<EventValue>;
   groups?: Array<Group>; // Add groups array as optional
 }
@@ -63,7 +64,7 @@ const fieldInheritanceSchema = z.object({
 })
 
 // Schema for EventValue
-const eventValueSchema = z.object({
+const eventValueSchema = z.object({ 
   id: z.string(), // ID is a string (like "PRODUCT_1")
   class: z.nativeEnum(FieldClass), // Class should map to FieldClass enum
   field: z.string(),
@@ -88,6 +89,7 @@ const eventSchema = z.object({
   id: z.string(),
   action: z.nativeEnum(ActionType),
   role: z.nativeEnum(RoleType),
+  interactions: z.number().optional(),
   inherits: z.boolean().optional(),
   values: z.array(eventValueSchema),
   groups: z.array(groupSchema).optional() // Groups array as optional
@@ -119,6 +121,7 @@ export const parseRecipeFlows = (values: Array<Event>): Array<RecipeFlowTemplate
       action: v.action,
       eventType: v.type,
       roleType: v.role,
+      interactions: v.interactions,
       identifier: v.id,
       dataFields: buildDataFields(v.values),
       groups: v.groups || []

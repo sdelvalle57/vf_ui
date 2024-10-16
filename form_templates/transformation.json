@@ -8,6 +8,7 @@
             "action": "CONSUME",
             "id": "CONSUME_TR_1",
             "role": "INPUT",
+            "interactions": 1,
             "values": [
                 {
                     "id": "RESOURCE_SPECIFICATION_1",
@@ -126,6 +127,7 @@
             "action": "PRODUCE",
             "id": "PRODUCE_TR_1",
             "role": "OUTPUT",
+            "interactions": 1,
             "values": [
                 {
                     "id": "RESOURCE_SPECIFICATION_2",

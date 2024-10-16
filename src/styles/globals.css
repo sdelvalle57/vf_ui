@@ -81,6 +81,10 @@ a {
   background-color: #dfdbdb;
 }
 
+.react-flow {
+  height: 50vh !important;
+}
+
 
 @tailwind base;
 @tailwind components;

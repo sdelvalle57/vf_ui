@@ -24,7 +24,7 @@ const MapTemplatePage: NextPage = () => {
         console.log(mapTemplate)
         return (
             <Box>
-                <Card style={{margin: "2em auto", textAlign:"center"}} maxW='sm'>
+                <Card style={{margin: "1em auto", textAlign:"center"}} maxW='sm'>
                     <CardBody>
                         <Stack mt='6' spacing='3'>
                             <Heading size='md'>Info</Heading>
@@ -37,15 +37,21 @@ const MapTemplatePage: NextPage = () => {
 
                 <Tabs>
                     <TabList>
-                        <Tab>Templates</Tab>
-                        <Tab>Rules</Tab>
-                        <Tab>New Template</Tab>
+                        <Tab>Process Templates</Tab>
+                        <Tab>New Process Template</Tab>
+                        <Tab>Process Rules</Tab>
                     </TabList>
     
                     <TabPanels>
                         <TabPanel><RecipeTemplatesTable noAction={true} templates={mapTemplate.templates} /></TabPanel>
-                        <TabPanel><TemplateRules templates={mapTemplate.templates} /></TabPanel>
                         <TabPanel><NewTemplate mapId={mapTemplate.map.id} /></TabPanel>
+                        {/* TODO: should send inputs and outputs templates according to DB */}
+                        <TabPanel>
+                            <TemplateRules
+                                templates={mapTemplate.templates}
+                                inputs={mapTemplate.templates} 
+                                outputs={mapTemplate.templates}/>
+                        </TabPanel>
                     </TabPanels>
                 </Tabs>
             </Box>

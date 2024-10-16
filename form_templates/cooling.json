@@ -8,6 +8,7 @@
             "id": "ACCEPT_1",
             "action": "ACCEPT",
             "role": "INPUT",
+            "interactions": 1,
             "values": [
                 {
                     "id": "RESOURCE_SPECIFICATION_1",
@@ -92,6 +93,61 @@
         {
             "type": "ECONOMIC_EVENT",
             "id": "MODIFY_1",
+            "action": "MODIFY",
+            "role": "OUTPUT",
+            "values": [
+                {
+                    "id": "RESOURCE_SPECIFICATION_2",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "field": "Product",
+                    "type": "SELECT",
+                    "description": "Product being cooled, linked to commodity and variety",
+                    "form-required": true,
+                    "accept-default": false,
+                    "inherits": {
+                        "id": "ACCEPT_1",
+                        "field": "RESOURCE_SPECIFICATION_1"
+                    }
+                },
+                {
+                    "id": "QUANTITY_2",
+                    "class": "QUANTITY",
+                    "field": "Quantity",
+                    "type": "NUMBER",
+                    "description": "Quantity of food cooled",
+                    "form-required": true,
+                    "accept-default": false
+                },
+                {
+                    "id": "NOTE_2",
+                    "class": "NOTE",
+                    "field": "Notes",
+                    "type": "TEXT",
+                    "description": "Process notes",
+                    "form-required": false,
+                    "accept-default": false
+                },
+                {
+                    "id": "CUSTOM_1",
+                    "class": "CUSTOM",
+                    "field": "Temperature",
+                    "type": "TEXT",
+                    "description": "Average Temperature",
+                    "form-required": false,
+                    "accept-default": true
+                }
+            ],
+            "groups": [
+                {
+                    "name": "Product",
+                    "class": "RESOURCE_SPECIFICATION",
+                    "fields": ["RESOURCE_SPECIFICATION_2", "QUANTITY_2"]
+                }
+            ]
+        },
+        {
+            "type": "ECONOMIC_EVENT",
+            "id": "TEMPERATURE_1",
             "action": "MODIFY",
             "role": "OUTPUT",
             "values": [
