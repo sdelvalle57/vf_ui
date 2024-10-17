@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
-import { useGetMapTemplateByIdQuery } from '../apollo/__generated__/graphql';
+import { MapTemplateResponse, RecipeTemplateBlacklist, useGetMapTemplateByIdQuery } from '../apollo/__generated__/graphql';
 import { Box, Card, CardBody, Heading, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import RecipeTemplatesTable from '../components/Templates/table';
 import NewTemplate from '../components/Templates/new_template';
@@ -16,12 +16,15 @@ const MapTemplatePage: NextPage = () => {
         skip: !map_id,
     });
 
+
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
     if (data?.getMapTemplateById) {
         const { getMapTemplateById: mapTemplate } = data;
-        console.log(mapTemplate)
+
+
         return (
             <Box>
                 <Card style={{margin: "1em auto", textAlign:"center"}} maxW='sm'>
@@ -48,9 +51,9 @@ const MapTemplatePage: NextPage = () => {
                         {/* TODO: should send inputs and outputs templates according to DB */}
                         <TabPanel>
                             <TemplateRules
-                                templates={mapTemplate.templates}
-                                inputs={mapTemplate.templates} 
-                                outputs={mapTemplate.templates}/>
+                                mapId={mapTemplate.map.id}
+                                blacklists={mapTemplate.blacklists}
+                                templates={mapTemplate.templates}/>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>

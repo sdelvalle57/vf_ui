@@ -85,6 +85,10 @@ a {
   height: 50vh !important;
 }
 
+.react-flow__node {
+  width: 200px;
+}
+
 
 @tailwind base;
 @tailwind components;

@@ -305,6 +305,12 @@ query GetMapTemplateById($mapId: Uuid!) {
       name
       type
     }
+    blacklists {
+      id
+      mapTemplateId
+      recipeTemplateId
+      recipeTemplatePredecesorId
+    }
     templates {
       ...RecipeTemplateWithRecipeFlowsFragment
     }
