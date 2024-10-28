@@ -1,70 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ReactFlow, { Background, Controls, Node, Edge, Handle, Position, applyNodeChanges, NodeChange, useReactFlow, Panel, ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { Box, Button, Flex, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from '@chakra-ui/react';
-import { MapTemplateResponse, RecipeTemplateBlacklist, RecipeTemplateWithRecipeFlows, RoleType } from '../apollo/__generated__/graphql';
+import { Box, Button, Flex, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast } from '@chakra-ui/react';
+import { RecipeTemplateBlacklist, RecipeTemplateWithRecipeFlows, RoleType, useSetMapTemplateBlacklistMutation } from '../apollo/__generated__/graphql';
 import { CloseIcon, AddIcon, CheckCircleIcon } from '@chakra-ui/icons';
-
-
 
 enum NodeType {
     INPUT,
     OUTPUT
 }
-
-const CustomNode = ({ id, data }: any) => {
-    const { onNodeDelete, role, templateId } = data;
-
-    const handleDelete = () => {
-        onNodeDelete(role, templateId)
-    };
-
-    return (
-        <Box position="relative" padding="1em" border="1px solid #ccc" borderRadius="8px" bg="white" shadow="md" maxWidth="200px">
-            <Box position="absolute" top="-10px" right="-10px">
-                <IconButton
-                    icon={<CloseIcon />}
-                    size="xs"
-                    aria-label="Delete Node"
-                    onClick={handleDelete}
-                />
-            </Box>
-            <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{data.label}</div>
-            <Handle type="target" position={Position.Top} />
-            <Handle type="source" position={Position.Bottom} />
-        </Box>
-    );
-};
-
-const CentralCustomNode = ({ data }: any) => {
-    const { onOpen } = data;
-
-    return (
-        <Box position="relative" padding="1.5em" border="2px solid teal" borderRadius="8px" bg="white" shadow="md">
-            <Box position="absolute" top="-10px" left="-10px">
-                <IconButton
-                    icon={<AddIcon />}
-                    size="sm"
-                    aria-label="Add Input Node"
-                    onClick={() => onOpen(NodeType.INPUT)}
-                />
-            </Box>
-            <Box position="absolute" bottom="-10px" right="-10px">
-                <IconButton
-                    icon={<AddIcon />}
-                    size="sm"
-                    aria-label="Add Output Node"
-                    onClick={() => onOpen(NodeType.OUTPUT)}
-                />
-            </Box>
-            <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{data.label}</div>
-            <Handle type="target" position={Position.Top} />
-            <Handle type="source" position={Position.Bottom} />
-        </Box>
-    );
-};
-
-const nodeTypes = { customNode: CustomNode, centralCustomNode: CentralCustomNode };
 
 interface Props {
     mapId: string,
@@ -75,20 +19,31 @@ interface Props {
 interface TemplateBlackList {
     recipeTemplateId: string,
     recipeTemplatePredecesorId: string
-
 }
 
 const TemplateRules = ({ mapId, templates, blacklists }: Props) => {
-    // State to track selected template
+    const toast = useToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     const [selectedTemplate, setSelectedTemplate] = useState<RecipeTemplateWithRecipeFlows | null>(null);
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const [inputTemplates, setInputTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([])
     const [outputTemplates, setOutputTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([])
     const [modalType, setModalType] = useState<NodeType | null>(null);
     const [saved, setSaved] = useState<boolean>(false)
 
+    const [setBlacklist ] = useSetMapTemplateBlacklistMutation({
+        onCompleted: async (data) => {
+            toast({
+                title: "Template rules set",
+                description: `Map template ${data.setMapTemplateBlacklists.map.name} rules were successfully set.`,
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
+        },
+    });
 
     useEffect(() => {
         spreadNodes()
@@ -102,17 +57,23 @@ const TemplateRules = ({ mapId, templates, blacklists }: Props) => {
 
     const getRules = () => {
         if (selectedTemplate) {
-            let inputRules: Array<RecipeTemplateWithRecipeFlows> = Object.assign([], templates)
-            let outputRules: Array<RecipeTemplateWithRecipeFlows> = Object.assign([], templates)
-            blacklists.forEach((b: RecipeTemplateBlacklist) => {
-                const { recipeTemplateId, recipeTemplatePredecesorId } = b
-                /////// successor,        predecessor
-                if (recipeTemplateId === selectedTemplate.id) { //if selectedTemplate is sucessor, remove predecessors
-                    inputRules = inputRules.filter(t => t.id !== selectedTemplate.id)
-                } else if (recipeTemplatePredecesorId === selectedTemplate.id) { //if selectedTemplate is predecessors, remove succesors
-                    outputRules = outputRules.filter(t => t.id !== selectedTemplate.id)
+            let inputRules: Array<RecipeTemplateWithRecipeFlows> =[]
+            let outputRules: Array<RecipeTemplateWithRecipeFlows> =[]
+
+
+            const inputsFilter = blacklists.filter(b => b.recipeTemplateId === selectedTemplate.id);
+            const outputsFilter = blacklists.filter(b => b.recipeTemplatePredecesorId === selectedTemplate.id);
+
+            templates.forEach(t => {
+                if(!inputsFilter.find(i => i.recipeTemplatePredecesorId === t.id)) {
+                    inputRules.push(t)
+                } 
+                if(!outputsFilter.find(o => o.recipeTemplateId === t.id)) {
+                    outputRules.push(t)
                 }
-            });
+            })
+
+
             setInputTemplates(inputRules)
             setOutputTemplates(outputRules)
         }
@@ -121,6 +82,15 @@ const TemplateRules = ({ mapId, templates, blacklists }: Props) => {
     const onNodeDelete = (role: NodeType, templateId: string) => {
         if (role === NodeType.INPUT) setInputTemplates((w) => w.filter(t => t.id !== templateId))
         else setOutputTemplates((w) => w.filter(t => t.id !== templateId))
+
+        //if template to remove is the same as selected template we should remove it if present in the another role
+        if(selectedTemplate && templateId === selectedTemplate.id) {
+            if(role === NodeType.INPUT) {
+                setOutputTemplates((w) => w.filter(t => t.id !== templateId))
+            } else {
+                setInputTemplates((w) => w.filter(t => t.id !== templateId))
+            }
+        }
     };
 
     const spreadNodes = () => {
@@ -201,34 +171,51 @@ const TemplateRules = ({ mapId, templates, blacklists }: Props) => {
         });
     };
 
-    const onSave = () => {
-        //TODO: we got to go the other way, if we have a whitelist of templates, 
-        //we should be able to build the blacklist for each input and output rules arrays
-
-        //fill it with selectedTemplate as predecessor
-        if (selectedTemplate) {
-            let blacklists: Array<TemplateBlackList> = []
-            templates.forEach(t => {
-                //fill it with selectedTemplate as successor
-                blacklists.push({
-                    recipeTemplateId: selectedTemplate.id,
-                    recipeTemplatePredecesorId: t.id
+    const onSave = async () => {
+        try {
+            if (selectedTemplate) {
+                let blacklists: Array<TemplateBlackList> = [];
+    
+                templates.forEach(t => {
+                    //inputTemplates are predecessors of selectedTemplate
+                    if (!inputTemplates.find(i => i.id === t.id)) {
+                        if (!blacklists.find(b => b.recipeTemplateId === selectedTemplate.id && b.recipeTemplatePredecesorId === t.id)) {
+                            blacklists.push({
+                                recipeTemplateId: selectedTemplate.id,
+                                recipeTemplatePredecesorId: t.id
+                            })
+                            
+                        }
+                    }
+                    //selectedTemplate is predeccesor of outputTemplates
+                    if (!outputTemplates.find(o => o.id === t.id)) {
+                        if (!blacklists.find(b => b.recipeTemplateId === t.id && b.recipeTemplatePredecesorId === selectedTemplate.id)) {
+                            blacklists.push({
+                                recipeTemplateId: t.id,
+                                recipeTemplatePredecesorId: selectedTemplate.id
+                            })
+                            
+                        }
+                    }
                 })
-            });
-
-            //fill it with selectedTemplate as predecessor
-            templates.forEach(t => {
-                blacklists.push({
-                    recipeTemplateId: t.id,
-                    recipeTemplatePredecesorId: selectedTemplate.id
+                await setBlacklist({
+                    variables: {
+                        mapTemplateId: mapId,
+                        selectedTemplateId: selectedTemplate.id,
+                        blacklists
+                    }
                 })
+                setSaved(true)
+            }
+        } catch (err: any) {
+            toast({
+                title: "An error occurred.",
+                description: err.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
             });
-
-            console.log(blacklists)
-
-            setSaved(true)
         }
-
     }
 
     const listTemplates = modalType === NodeType.INPUT ?
@@ -317,3 +304,58 @@ const TemplateRules = ({ mapId, templates, blacklists }: Props) => {
 };
 
 export default TemplateRules;
+
+
+const CustomNode = ({ id, data }: any) => {
+    const { onNodeDelete, role, templateId } = data;
+
+    const handleDelete = () => {
+        onNodeDelete(role, templateId)
+    };
+
+    return (
+        <Box position="relative" padding="1em" border="1px solid #ccc" borderRadius="8px" bg="white" shadow="md" maxWidth="200px">
+            <Box position="absolute" top="-10px" right="-10px">
+                <IconButton
+                    icon={<CloseIcon />}
+                    size="xs"
+                    aria-label="Delete Node"
+                    onClick={handleDelete}
+                />
+            </Box>
+            <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{data.label}</div>
+            <Handle type="target" position={Position.Top} />
+            <Handle type="source" position={Position.Bottom} />
+        </Box>
+    );
+};
+
+const CentralCustomNode = ({ data }: any) => {
+    const { onOpen } = data;
+
+    return (
+        <Box position="relative" padding="1.5em" border="2px solid teal" borderRadius="8px" bg="white" shadow="md">
+            <Box position="absolute" top="-10px" left="-10px">
+                <IconButton
+                    icon={<AddIcon />}
+                    size="sm"
+                    aria-label="Add Input Node"
+                    onClick={() => onOpen(NodeType.INPUT)}
+                />
+            </Box>
+            <Box position="absolute" bottom="-10px" right="-10px">
+                <IconButton
+                    icon={<AddIcon />}
+                    size="sm"
+                    aria-label="Add Output Node"
+                    onClick={() => onOpen(NodeType.OUTPUT)}
+                />
+            </Box>
+            <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{data.label}</div>
+            <Handle type="target" position={Position.Top} />
+            <Handle type="source" position={Position.Bottom} />
+        </Box>
+    );
+};
+
+const nodeTypes = { customNode: CustomNode, centralCustomNode: CentralCustomNode };

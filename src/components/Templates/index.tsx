@@ -1,8 +1,5 @@
 import { Alert,  Spinner, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
-import { RecipeTemplateWithRecipeFlows, useGetTemplatesQuery } from "../../apollo/__generated__/graphql"
-import { useEffect, useState } from "react";
-import NewTemplate from "./new_template";
-import RecipeTemplatesTable from "./table";
+import { useGetMapTemplatesQuery } from "../../apollo/__generated__/graphql"
 import NewMapTemplate from "./new";
 import MapTemplateTables from "./map_templates_table";
 
@@ -10,17 +7,11 @@ import MapTemplateTables from "./map_templates_table";
 const RecipeTemplatesComponent = () => {
     // const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
     
-    const { loading, data, error } = useGetTemplatesQuery({
+    const { loading, data, error } = useGetMapTemplatesQuery({
         pollInterval: 5000  
-    })
+    });
     
-    const [recipeTemplates, setRecipeTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([]);
 
-    useEffect(() => {
-        if(data?.getTemplates) {
-            setRecipeTemplates(data.getTemplates)
-        }
-    }, [data?.getTemplates])
 
     if (error) return <Alert status='error'>{error.message}</Alert>
     if (loading) return <Spinner />
@@ -35,7 +26,7 @@ const RecipeTemplatesComponent = () => {
                     </TabList>
     
                     <TabPanels>
-                        <TabPanel><MapTemplateTables /></TabPanel>
+                        <TabPanel><MapTemplateTables mapTemplates={data.getMapTemplates}/></TabPanel>
                         <TabPanel><NewMapTemplate /></TabPanel>
                     </TabPanels>
                 </Tabs>

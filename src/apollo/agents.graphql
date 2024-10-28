@@ -271,6 +271,13 @@ fragment RecipeTemplateWithRecipeFlowsFragment on RecipeTemplateWithRecipeFlows 
   }
 }
 
+fragment BlacklistFragment on RecipeTemplateBlacklist {
+  id
+  mapTemplateId
+  recipeTemplateId
+  recipeTemplatePredecesorId
+}
+
 mutation CreateMapTemplate(
   $name: String!,
   $type: TemplateType!
@@ -285,12 +292,40 @@ mutation CreateMapTemplate(
   }
 }
 
+mutation SetMapTemplateBlacklist(
+  $mapTemplateId: Uuid!,
+  $selectedTemplateId: Uuid!,
+  $blacklists: [MapTemplateBlacklist!]!
+) {
+  setMapTemplateBlacklists(
+    mapTemplateId: $mapTemplateId,
+    selectedTemplateId: $selectedTemplateId,
+    blacklists: $blacklists
+  ) {
+    map {
+      id
+      name
+      type
+    }
+    blacklists { 
+      ...BlacklistFragment
+    }
+    templates {
+      ...RecipeTemplateWithRecipeFlowsFragment
+    }
+  }
+}
+
+
 query GetMapTemplates {
   getMapTemplates {
     map {
       id
       name
       type
+    }
+    blacklists { 
+      ...BlacklistFragment
     }
     templates {
       ...RecipeTemplateWithRecipeFlowsFragment
@@ -317,12 +352,6 @@ query GetMapTemplateById($mapId: Uuid!) {
   }
 }
 
-query getTemplatesByMapId($mapId: Uuid!) {
-  getTemplatesByMapId(mapId: $mapId) {
-    ...RecipeTemplateWithRecipeFlowsFragment
-  }
-}
-
 mutation CreateRecipeTemplate(
   $mapTemplateId: Uuid!,
   $identifier: String!,
@@ -341,12 +370,6 @@ mutation CreateRecipeTemplate(
     fulfills: $fulfills,
     trigger: $trigger
   ) {
-    ...RecipeTemplateWithRecipeFlowsFragment
-  }
-}
-
-query GetTemplates {
-  getTemplates {
     ...RecipeTemplateWithRecipeFlowsFragment
   }
 }

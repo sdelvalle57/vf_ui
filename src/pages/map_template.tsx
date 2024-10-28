@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router';
-import { MapTemplateResponse, RecipeTemplateBlacklist, useGetMapTemplateByIdQuery } from '../apollo/__generated__/graphql';
+import { useGetMapTemplateByIdQuery } from '../apollo/__generated__/graphql';
 import { Box, Card, CardBody, Heading, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import RecipeTemplatesTable from '../components/Templates/table';
 import NewTemplate from '../components/Templates/new_template';
@@ -15,8 +15,6 @@ const MapTemplatePage: NextPage = () => {
         pollInterval: 5000,
         skip: !map_id,
     });
-
-
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
