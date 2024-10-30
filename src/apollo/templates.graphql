@@ -1,0 +1,175 @@
+fragment RecipeFlowTemplateWithDataFieldsFragment on RecipeFlowTemplateWithDataFields {
+  id
+  recipeTemplateId
+  eventType
+  roleType
+  action
+  identifier
+  interactions
+  groups {
+    id
+    name
+    groupClass
+  }
+  dataFields {
+    id
+    recipeFlowTemplateId
+    groupId
+    fieldIdentifier
+    fieldClass
+    field
+    fieldType
+    note
+    required
+    flowThrough
+    inherits
+    acceptDefault
+  }
+}
+
+fragment RecipeTemplateWithRecipeFlowsFragment on RecipeTemplateWithRecipeFlows {
+  id
+  mapTemplateId
+  name
+  identifier
+  commitment
+  fulfills
+  trigger
+  version
+  overridenBy
+  createdBy
+  recipeFlows {
+    ...RecipeFlowTemplateWithDataFieldsFragment
+  }
+}
+
+fragment BlacklistFragment on RecipeTemplateBlacklist {
+  id
+  mapTemplateId
+  recipeTemplateId
+  recipeTemplatePredecesorId
+}
+
+mutation CreateMapTemplate(
+  $name: String!,
+  $type: TemplateType!
+) {
+  createMapTemplate(
+    name: $name,
+    type: $type
+  ) {
+    id
+    name
+    type
+  }
+}
+
+mutation SetMapTemplateBlacklist(
+  $mapTemplateId: Uuid!,
+  $selectedTemplateId: Uuid!,
+  $blacklists: [MapTemplateBlacklist!]!
+) {
+  setMapTemplateBlacklists(
+    mapTemplateId: $mapTemplateId,
+    selectedTemplateId: $selectedTemplateId,
+    blacklists: $blacklists
+  ) {
+    map {
+      id
+      name
+      type
+    }
+    blacklists { 
+      ...BlacklistFragment
+    }
+    templates {
+      ...RecipeTemplateWithRecipeFlowsFragment
+    }
+  }
+}
+
+
+query GetMapTemplates {
+  getMapTemplates {
+    map {
+      id
+      name
+      type
+    }
+    blacklists { 
+      ...BlacklistFragment
+    }
+    templates {
+      ...RecipeTemplateWithRecipeFlowsFragment
+    }
+  }
+}
+
+query GetMapTemplateById($mapId: Uuid!) {
+  getMapTemplateById(mapId: $mapId) {
+    map {
+      id
+      name
+      type
+    }
+    blacklists {
+      id
+      mapTemplateId
+      recipeTemplateId
+      recipeTemplatePredecesorId
+    }
+    templates {
+      ...RecipeTemplateWithRecipeFlowsFragment
+    }
+  }
+}
+
+mutation CreateRecipeTemplate(
+  $mapTemplateId: Uuid!,
+  $identifier: String!,
+  $name: String!,
+  $recipeFlowTemplateArgs: [RecipeFlowTemplateArg!]!,
+  $commitment: ActionType,
+  $fulfills: String,
+  $trigger: ActionType,
+  $version: Int!,
+  $overrides: Uuid,
+  $createdBy: Uuid
+) {
+  createRecipeTemplate(
+    mapTemplateId: $mapTemplateId,
+    identifier: $identifier,
+    name: $name,
+    recipeFlowTemplateArgs: $recipeFlowTemplateArgs,
+    commitment: $commitment,
+    fulfills: $fulfills,
+    trigger: $trigger,
+    version: $version,
+    overrides: $overrides,
+    createdBy: $createdBy
+  ) {
+    ...RecipeTemplateWithRecipeFlowsFragment
+  }
+}
+
+query GetTemplateById($templateId: Uuid!) {
+  getTemplateById(templateId: $templateId) {
+    ...RecipeTemplateWithRecipeFlowsFragment
+  }
+}
+
+
+# Recipe Template Access
+query GetTemplatesAccessByAgent($agentId: Uuid!) {
+  getTemplatesAccessByAgent(agentId: $agentId) {
+   ...RecipeTemplateWithRecipeFlowsFragment
+  }
+}
+
+mutation AssignTemplateToAgent($agentId: Uuid!, $recipeTemplateId: Uuid!) {
+  assignTemplateToAgent(agentId: $agentId, recipeTemplateId: $recipeTemplateId) {
+    id
+    agentId
+    recipeTemplateId
+  }
+}

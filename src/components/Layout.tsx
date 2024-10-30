@@ -25,6 +25,7 @@ export default function Layout(props: PageProps) {
 
   useEffect(() => {
     const storageSelectedAgent = localStorage.getItem('selected_agent');
+    console.log("storageSelectedAgent", storageSelectedAgent)
     if (storageSelectedAgent && agents) {
       const agent = agents.find(a => a.id === storageSelectedAgent);
       if (agent) dispatch(selectAgent(agent))

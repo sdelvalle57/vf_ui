@@ -14,10 +14,12 @@ const MyTemplatesComponent = () => {
         pollInterval: 5000  // Skip the query if selectedAgent is null
     });
 
+    console.log(data)
+
     if (queryError) return <Alert status='error'>{queryError.message}</Alert>
     if (loading) return <Spinner />
-    if(data) {
-        return <RecipeTemplatesTable noAction={true} recipes={data.getTemplatesAccessByAgent} />
+    if(data?.getTemplatesAccessByAgent) {
+        return <RecipeTemplatesTable noAction={true} templates={data.getTemplatesAccessByAgent} />
     }
     return null;
 }

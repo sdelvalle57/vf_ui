@@ -14,9 +14,14 @@ const AgentsTable = (props: AgentsTableProps) => {
     const dispatch = useDispatch();
     const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
 
+    const onSelectAgent = (agent: Agent) => {
+        localStorage.setItem("selected_agent", agent.id)
+        dispatch(selectAgent(agent))
+    }
+
     const renderSelectAgentButton = (a: Agent) => {
         if (selectedAgent && selectedAgent.id === a.id) return <Button disabled={true}>Selected</Button>
-        return <Button colorScheme='blue' onClick={() => dispatch(selectAgent(a))}>Select</Button>
+        return <Button colorScheme='blue' onClick={() => onSelectAgent(a)}>Select</Button>
     }
 
     return (

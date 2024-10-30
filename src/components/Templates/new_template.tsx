@@ -13,7 +13,7 @@ const NewTemplate = ({mapId}: Props) => {
     const [error, setError] = useState<string | null>(null)
     const toast = useToast();
 
-    const [createRecipeTemplate, { loading, error: createError }] = useCreateRecipeTemplateMutation({
+    const [createRecipeTemplate ] = useCreateRecipeTemplateMutation({
         onCompleted: (data) => {
             toast({
                 title: "Recipe template created.",
@@ -36,22 +36,9 @@ const NewTemplate = ({mapId}: Props) => {
 
     const handleJSON = async (event: React.FormEvent) => {
         event.preventDefault();
-        // You can handle the JSON document here
-        
         try {
             const doc = parseJson(jsonDocument)
 
-            console.log({
-                variables: {
-                    identifier: doc.id,
-                    commitment: doc.commitment,
-                    fulfills: doc.fulfills,
-                    name: doc.name,
-                    trigger: doc.trigger,
-                    recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
-                },
-            })
-           
             await createRecipeTemplate({
                 variables: {
                     identifier: doc.id,
@@ -61,6 +48,7 @@ const NewTemplate = ({mapId}: Props) => {
                     name: doc.name,
                     trigger: doc.trigger,
                     recipeFlowTemplateArgs: parseRecipeFlows(doc.events),
+                    version: 1
                 },
             });
         } catch (e: any) {

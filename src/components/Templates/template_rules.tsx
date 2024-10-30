@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import ReactFlow, { Background, Controls, Node, Edge, Handle, Position, applyNodeChanges, NodeChange, useReactFlow, Panel, ReactFlowProvider } from 'reactflow';
+import ReactFlow, { Background, Controls, Node, Edge, Handle, Position, applyNodeChanges, NodeChange, Panel, ReactFlowProvider } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Box, Button, Flex, IconButton, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, useToast } from '@chakra-ui/react';
-import { RecipeTemplateBlacklist, RecipeTemplateWithRecipeFlows, RoleType, useSetMapTemplateBlacklistMutation } from '../apollo/__generated__/graphql';
+import { RecipeTemplateBlacklist, RecipeTemplateWithRecipeFlows, useSetMapTemplateBlacklistMutation } from '../../apollo/__generated__/graphql';
 import { CloseIcon, AddIcon, CheckCircleIcon } from '@chakra-ui/icons';
 
 enum NodeType {

@@ -1,7 +1,7 @@
 import { Button, Card, CardBody, Grid, GridItem, Heading, Text, useToast } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import TemplatesComponent from "./templates";
-import { RecipeProcessWithRelation, RecipeTemplateWithRecipeFlows, RecipeWithResources } from "../../apollo/__generated__/graphql";
+import { RecipeTemplateWithRecipeFlows, RecipeWithResources } from "../../apollo/__generated__/graphql";
 import EditProcessComponent from "./edit_process";
 
 interface Props {

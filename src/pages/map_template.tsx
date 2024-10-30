@@ -4,7 +4,7 @@ import { useGetMapTemplateByIdQuery } from '../apollo/__generated__/graphql';
 import { Box, Card, CardBody, Heading, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react';
 import RecipeTemplatesTable from '../components/Templates/table';
 import NewTemplate from '../components/Templates/new_template';
-import TemplateRules from './template_rules';
+import TemplateRules from '../components/Templates/template_rules';
 
 const MapTemplatePage: NextPage = () => {
     const router = useRouter();
@@ -38,15 +38,14 @@ const MapTemplatePage: NextPage = () => {
 
                 <Tabs>
                     <TabList>
-                        <Tab>Process Templates</Tab>
-                        <Tab>New Process Template</Tab>
-                        <Tab>Process Rules</Tab>
+                        <Tab>Map Templates</Tab>
+                        <Tab>New Map Template</Tab>
+                        <Tab>Map Template Rules</Tab>
                     </TabList>
     
                     <TabPanels>
-                        <TabPanel><RecipeTemplatesTable noAction={true} templates={mapTemplate.templates} /></TabPanel>
+                        <TabPanel><RecipeTemplatesTable noAction={false} templates={mapTemplate.templates} /></TabPanel>
                         <TabPanel><NewTemplate mapId={mapTemplate.map.id} /></TabPanel>
-                        {/* TODO: should send inputs and outputs templates according to DB */}
                         <TabPanel>
                             <TemplateRules
                                 mapId={mapTemplate.map.id}

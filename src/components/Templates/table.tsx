@@ -85,6 +85,9 @@ const RecipeTemplatesTable = ({ templates, noAction }: RecipeTemplatesProps) => 
                             <Tr >
                                 <Th>ID</Th>
                                 <Th>Name</Th>
+                                <Th>Version</Th>
+                                <Th>Created By</Th>
+                                <Th>Overriden By</Th>
                                 <Th>Action</Th>
                             </Tr>
                         </Thead>
@@ -93,6 +96,9 @@ const RecipeTemplatesTable = ({ templates, noAction }: RecipeTemplatesProps) => 
                                 <Tr key={r.id} >
                                     <Td>{r.id}</Td>
                                     <Td>{r.name}</Td>
+                                    <Td>{r.version}</Td>
+                                    <Td>{r.createdBy || ""}</Td>
+                                    <Td>{r.overridenBy || ""}</Td>
                                     <Td>
                                         <Button colorScheme="teal" onClick={() => onViewClick(r.id)} style={{ marginRight: "1em" }}>View</Button>
                                         {getAssignButton(r.id)}
