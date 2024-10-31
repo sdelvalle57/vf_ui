@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { RecipeTemplateWithRecipeFlows, useGetTemplatesAccessByAgentQuery } from "../../apollo/__generated__/graphql";
-import { Alert, Card, CardBody, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Alert, Box, Button, Card, CardBody, Heading, Spinner, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/rootReducer";
 
 
 interface Props {
-    onAddProcess: (template: RecipeTemplateWithRecipeFlows) => void
+    onAddTemplate: (template: RecipeTemplateWithRecipeFlows) => void
 }
 
-const TemplatesComponent = ({ onAddProcess }: Props) => {
+const TemplatesComponent = ({ onAddTemplate }: Props) => {
 
     const selectedAgent = useSelector((state: RootState) => state.selectedAgent.value);
     const { loading, data, error } = useGetTemplatesAccessByAgentQuery({
@@ -18,37 +18,45 @@ const TemplatesComponent = ({ onAddProcess }: Props) => {
         pollInterval: 5000
     })
 
-    const [recipeTemplates, setRecipeTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([]);
+    const [templates, setTemplates] = useState<Array<RecipeTemplateWithRecipeFlows>>([]);
 
     useEffect(() => {
         if (data?.getTemplatesAccessByAgent) {
-            setRecipeTemplates(data.getTemplatesAccessByAgent)
+            setTemplates(data.getTemplatesAccessByAgent)
         }
     }, [data?.getTemplatesAccessByAgent])
 
     const addTemplate = (template: RecipeTemplateWithRecipeFlows) => {
-        onAddProcess(template);
+        onAddTemplate(template);
     }
 
-
-    const renderTemplates = () => {
-        return recipeTemplates.map(r => {
-            return (
-                <Card onClick={() => addTemplate(r)} className="new_process_card" key={r.id}>
-                    <Heading size='xs' textTransform='uppercase'>
-                        {r.name}
-                    </Heading>
-                    <CardBody>
-                        <Text>{r.recipeTemplateType}</Text>
-                    </CardBody>
-                </Card>
-            )
-        })
-    }
 
     if (error) return <Alert status='error'>{error.message}</Alert>
     if (loading) return <Spinner />
-    if (data) return renderTemplates()
+    if (data) return (
+        <Box width="20%" padding="2em" borderRight="1px solid #ccc" overflowY="auto">
+            {templates.map((recipe) => (
+                <Button
+                    key={recipe.id}
+                    width="100%"
+                    marginBottom="1em"
+                    padding="1.5em"
+                    boxShadow="md"
+                    _hover={{
+                        backgroundColor: 'teal.500',
+                        color: 'white',
+                        cursor: 'pointer',
+                        boxShadow: 'lg',
+                    }}
+                    _active={{
+                        transform: 'scale(0.98)',
+                    }}
+                    onClick={() => onAddTemplate(recipe)} >
+                    {recipe.name}
+                </Button>
+            ))}
+        </Box>
+    )
     return null
 }
 

@@ -1,21 +1,41 @@
 # Recipes
+
+fragment RecipeFragment on Recipe {
+  id
+  agentId
+  name
+  note
+  createdAt
+}
+
+fragment ResourceSpecificationFragment on ResourceSpecification {
+  id
+  agentId
+  name
+  note
+  createdAt
+  resourceType
+  unitOfMeasure
+}
+
+fragment RelationsFragment on ProcessRelation {
+  id
+  recipeId
+  recipeProcessId
+  predecessor
+}
+
+
 query RecipesByAgent($agentId: Uuid!) {
   recipesByAgent(agentId: $agentId) {
     recipe {
-      id
-      agentId
-      name
-      note
-      createdAt
+      ...RecipeFragment
     }
     resourceSpecifications {
-      id
-      agentId
-      name
-      note
-      createdAt
-      resourceType
-      unitOfMeasure
+      ...ResourceSpecificationFragment
+    }
+    relations {
+      ...RelationsFragment
     }
   }
 }
@@ -23,20 +43,13 @@ query RecipesByAgent($agentId: Uuid!) {
 query RecipeById($recipeId: Uuid!) {
   recipeById(recipeId: $recipeId) {
     recipe {
-      id
-      agentId
-      name
-      note
-      createdAt
+      ...RecipeFragment
     }
     resourceSpecifications {
-      id
-      agentId
-      name
-      note
-      createdAt
-      resourceType
-      unitOfMeasure
+      ...ResourceSpecificationFragment
+    }
+    relations {
+      ...RelationsFragment
     }
   }
 }
@@ -54,20 +67,35 @@ mutation CreateRecipe(
     recipeResources: $recipeResources
   ) {
     recipe {
-      id
-      agentId
-      name
-      note
-      createdAt
+      ...RecipeFragment
     }
     resourceSpecifications {
-      id
-      agentId
-      name
-      note
-      createdAt
-      resourceType
-      unitOfMeasure
+      ...ResourceSpecificationFragment
     }
+    relations {
+      ...RelationsFragment
+    }
+  }
+}
+
+mutation SetRecipeProcesses(
+  $recipeId: Uuid!,
+  $recipeTemplateIds: [Uuid!]!,
+  $name: String!,
+  $relations: [RecipeProcessRelation!]!
+) {
+  setRecipeProcesses(
+    recipeId: $recipeId,
+    recipeTemplateIds: $recipeTemplateIds,
+    name: $name,
+    relations: $relations
+  ) {
+    recipeProcess {
+      id
+      recipeId
+      recipeTemplateId
+      name
+    }
+    predecessors
   }
 }

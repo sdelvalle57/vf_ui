@@ -1,8 +1,10 @@
-import { Button, Card, CardBody, Grid, GridItem, Heading, Text, useToast } from "@chakra-ui/react"
+import { Box, Button, Card, CardBody, Flex, Grid, GridItem, Heading, Text, useToast } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import TemplatesComponent from "./templates";
-import { RecipeTemplateWithRecipeFlows, RecipeWithResources } from "../../apollo/__generated__/graphql";
+import { RecipeProcessRelation, RecipeTemplateWithRecipeFlows, RecipeWithResources, useSetRecipeProcessesMutation } from "../../apollo/__generated__/graphql";
 import EditProcessComponent from "./edit_process";
+import 'reactflow/dist/style.css';
+import ReactFlow, { applyNodeChanges, Background, Controls, Edge, Handle, Node, NodeChange, Position, ReactFlowProvider } from "reactflow";
 
 interface Props {
     recipe: RecipeWithResources
@@ -11,56 +13,43 @@ interface Props {
 export const RecipeProcessEditor = ({ recipe }: Props) => {
     const toast = useToast();
 
-    const [openShowProcessModal, setOpenShowProcessModal] = useState(false);
-    const [selectedProcess, setSelectedProcess] = useState<RecipeProcessWithRelation | null>(null)
-    const [processes, setProcesses] = useState<Array<RecipeProcessWithRelation>>([])
+    const [processes, setProcesses] = useState<Array<RecipeProcessRelation>>([])
+    const [nodes, setNodes] = useState<Node[]>([]);
+    const [edges, setEdges] = useState<Edge[]>([]);
 
 
-    // const [createRecipeProcesses, { loading, error }] = useCreateRecipeProcessesMutation({
-    //     onCompleted: async (data) => {
-    //         toast({
-    //             title: "Economic Resource created.",
-    //             description: `Recipe data ${data.createRecipeProcesses.recipe.name} was successfully created.`,
-    //             status: "success",
-    //             duration: 5000,
-    //             isClosable: true,
-    //         });
-    //     },
-    // });
+    const [setRecipeProcesses, { loading, error }] = useSetRecipeProcessesMutation({
+        onCompleted: async (data) => {
+            toast({
+                title: "Economic Resource created.",
+                description: `${recipe.recipe.name} data was successfully created.`,
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+            });
+        },
+    });
 
-    // useEffect(() => {
-    //     if (error) {
-    //         toast({
-    //             title: "Error assigning template",
-    //             description: error.message,
-    //             status: "error",
-    //             duration: 5000,
-    //             isClosable: true,
-    //         });
-    //     }
-    // }, [error])
+    useEffect(() => {
+        if (error) {
+            toast({
+                title: "Error assigning template",
+                description: error.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+    }, [error])
 
 
     const onAddProcess = (template: RecipeTemplateWithRecipeFlows) => {
         const lastTemplate = processes[processes.length - 1];
-        const recipeProcessRelation: RecipeProcessWithRelation = {
-            outputOf: lastTemplate?.recipeProcess ? [lastTemplate.recipeProcess] : [],
-            recipeProcess: template
+        const recipeProcessRelation: RecipeProcessRelation = {
+            templateId: template.id,
+            templatePredecessorId: lastTemplate?.templateId ? [lastTemplate.templateId] : [],
         }
         setProcesses([...processes, recipeProcessRelation]);
-    }
-
-    const onShowTemplate = (template: RecipeProcessWithRelation) => {
-        setSelectedProcess(template);
-        setOpenShowProcessModal(true);
-    }
-
-    const onEditedProcess = (p: RecipeProcessWithRelation) => {
-        const tIndex = processes.findIndex(i => i.recipeProcess.id === p.recipeProcess.id);
-        const processesCopy: Array<RecipeProcessWithRelation> = Object.assign([], processes);
-        processesCopy[tIndex] = p;
-        setProcesses(processesCopy);
-        setOpenShowProcessModal(false)
     }
 
     const removeTypename = (obj: any): any => {
@@ -78,76 +67,60 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
         return obj;
     }
 
-    const onSave = async (e: React.FormEvent) => {
-        e.preventDefault();
-        // try {
-        //     await createRecipeProcesses({
-        //         variables: {
-        //             recipeId: recipe.recipe.id,
-        //             data: removeTypename(processes)
-        //         },
-        //     });
-        // } catch (err: any) {
-        //     toast({
-        //         title: "An error occurred.",
-        //         description: err.message,
-        //         status: "error",
-        //         duration: 5000,
-        //         isClosable: true,
-        //     });
-        // }
+    const onNodesChange = (changes: NodeChange[]) => {
+        setNodes((nds) => {
+            return applyNodeChanges(changes, nds)
+        });
     };
 
-
-    const renderProcesses = () => {
-        return processes.map((r, i) => {
-            return (
-                <Card onClick={() => onShowTemplate(r)} className="new_process_card" key={r.recipeProcess.id + i}>
-                    <Heading size='x' textTransform='uppercase'>
-                        {r.recipeProcess.name}
-                    </Heading>
-                    <CardBody>
-                        <Text>{r.recipeProcess.recipeTemplateType}</Text>
-                    </CardBody>
-                </Card>
-            )
-        })
-    }
+    const onSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+        //TODO: save
+    };
 
     return (
-        <div style={{ textAlign: "center", minHeight: "80vh" }}>
-            <Grid
-                h='200px'
-                templateRows='repeat(2, 1fr)'
-                templateColumns='repeat(10, 1fr)'
-                gap={4} >
-                <GridItem colSpan={3}>
-                    <EditProcessComponent
-                        recipe={recipe}
-                        isOpen={openShowProcessModal}
-                        process={selectedProcess}
-                        onEditedProcess={onEditedProcess}
-                        onClose={() => setOpenShowProcessModal(false)} />
-                    <TemplatesComponent
-                        onAddProcess={onAddProcess}/>
-
-                </GridItem>
-
-                <GridItem colSpan={6}>
-                    {renderProcesses()}
-                </GridItem>
-
-                <GridItem colSpan={9}>
-                    {
-                        processes.length > 0 && (
-                            <Button onClick={onSave} style={{ margin: "auto" }} as="a" colorScheme="teal" size="md">
-                                Save
-                            </Button>
-                        )
-                    }
-                </GridItem>
-            </Grid>
-
-        </div>
+        <ReactFlowProvider>
+            <Flex direction="column" height="50vh">
+                {/* Sidebar with RecipeTemplates */}
+                <Flex direction="row" flexGrow={1}>
+                    <TemplatesComponent onAddTemplate={onAddProcess} />
+                    {/* React Flow Canvas */}
+                    <Box width="80%" padding="2em">
+                        <ReactFlow
+                            nodes={nodes}
+                            edges={edges}
+                            nodeTypes={nodeTypes}
+                            nodesConnectable={true}
+                            nodesDraggable={true}
+                            selectNodesOnDrag={true}
+                            fitView
+                            onNodesChange={onNodesChange}  >
+                            <Background />
+                            <Controls />
+                        </ReactFlow>
+                    </Box>
+                </Flex>
+            </Flex>
+        </ReactFlowProvider>
     )
 }
+
+
+const CustomNode = ({ id, data }: any) => {
+    const { onNodeDelete, role, templateId } = data;
+
+    const handleDelete = () => {
+        onNodeDelete(role, templateId)
+    };
+
+    return (
+        <Box position="relative" padding="1em" border="1px solid #ccc" borderRadius="8px" bg="white" shadow="md" maxWidth="200px">
+
+            <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{data.label}</div>
+            <Handle type="target" position={Position.Top} />
+            <Handle type="source" position={Position.Bottom} />
+        </Box>
+    );
+};
+
+const nodeTypes = { customNode: CustomNode };

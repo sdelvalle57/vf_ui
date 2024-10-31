@@ -1,8 +1,8 @@
 import type { NextPage } from 'next'
-import TemplatesComponent from '../components/Templates';
+import RecipeTemplatesComponent from '../components/Templates';
 
 const TemplatePage: NextPage = () => {
-    return <TemplatesComponent />
+    return <RecipeTemplatesComponent />
 }
 
 export default TemplatePage

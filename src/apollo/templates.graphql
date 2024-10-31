@@ -38,6 +38,7 @@ fragment RecipeTemplateWithRecipeFlowsFragment on RecipeTemplateWithRecipeFlows 
   version
   overridenBy
   createdBy
+  firstVersion
   recipeFlows {
     ...RecipeFlowTemplateWithDataFieldsFragment
   }
