@@ -4,19 +4,17 @@ import TemplatesComponent from "./templates";
 import { RecipeProcessRelation, RecipeTemplateWithRecipeFlows, RecipeWithResources, useSetRecipeProcessesMutation } from "../../apollo/__generated__/graphql";
 import EditProcessComponent from "./edit_process";
 import 'reactflow/dist/style.css';
-import ReactFlow, { applyNodeChanges, Background, Controls, Edge, Handle, Node, NodeChange, Position, ReactFlowProvider } from "reactflow";
+import ReactFlow, { addEdge, applyEdgeChanges, applyNodeChanges, Background, Connection, Controls, Edge, EdgeChange, Handle, Node, NodeChange, Position, ReactFlowProvider, EdgeProps, BaseEdge, EdgeLabelRenderer } from "reactflow";
 
 interface Props {
-    recipe: RecipeWithResources
+    recipe: RecipeWithResources;
 }
 
 export const RecipeProcessEditor = ({ recipe }: Props) => {
     const toast = useToast();
 
-    const [processes, setProcesses] = useState<Array<RecipeProcessRelation>>([])
     const [nodes, setNodes] = useState<Node[]>([]);
     const [edges, setEdges] = useState<Edge[]>([]);
-
 
     const [setRecipeProcesses, { loading, error }] = useSetRecipeProcessesMutation({
         onCompleted: async (data) => {
@@ -40,17 +38,49 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
                 isClosable: true,
             });
         }
-    }, [error])
-
+    }, [error]);
 
     const onAddProcess = (template: RecipeTemplateWithRecipeFlows) => {
-        const lastTemplate = processes[processes.length - 1];
-        const recipeProcessRelation: RecipeProcessRelation = {
-            templateId: template.id,
-            templatePredecessorId: lastTemplate?.templateId ? [lastTemplate.templateId] : [],
+        const newNode: Node = {
+            id: `${nodes.length + 1}`, // Assign a unique ID
+            type: 'customNode', // Use the customNode type defined below
+            position: { x: Math.random() * 400, y: Math.random() * 400 }, // Random initial position, you can adjust this
+            data: {
+                label: template.name, // Example label, can customize to use template data
+                templateId: template.id,
+                onNodeDelete: () => {
+                    // Define node delete logic if required
+                    setNodes((nds) => nds.filter((node) => node.id !== newNode.id));
+                    setEdges((eds) => eds.filter((edge) => edge.source !== newNode.id && edge.target !== newNode.id));
+                },
+            },
+        };
+        setNodes((nds) => [...nds, newNode]);
+    };
+
+    const onEdgesChange = (changes: EdgeChange[]) => {
+        setEdges((eds) => applyEdgeChanges(changes, eds));
+    };
+
+    const onConnect = (connection: Connection) => {
+        if (connection.source && connection.target) {
+            const newEdge: Edge = {
+                ...connection,
+                id: `e${connection.source}-${connection.target}`,
+                type: 'custom', // Use custom edge type
+                data: {
+                    onEdgeDelete: () => {
+                        setEdges((eds) => eds.filter((edge) => edge.id !== `e${connection.source}-${connection.target}`));
+                    },
+                },
+                source: connection.source,
+                target: connection.target,
+                sourceHandle: connection.sourceHandle || undefined,
+                targetHandle: connection.targetHandle || undefined,
+            };
+            setEdges((eds) => [...eds, newEdge]);
         }
-        setProcesses([...processes, recipeProcessRelation]);
-    }
+    };
 
     const removeTypename = (obj: any): any => {
         if (Array.isArray(obj)) {
@@ -65,11 +95,11 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
             return newObj;
         }
         return obj;
-    }
+    };
 
     const onNodesChange = (changes: NodeChange[]) => {
         setNodes((nds) => {
-            return applyNodeChanges(changes, nds)
+            return applyNodeChanges(changes, nds);
         });
     };
 
@@ -90,11 +120,14 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
                             nodes={nodes}
                             edges={edges}
                             nodeTypes={nodeTypes}
+                            edgeTypes={{ custom: CustomEdge }}
                             nodesConnectable={true}
                             nodesDraggable={true}
                             selectNodesOnDrag={true}
                             fitView
-                            onNodesChange={onNodesChange}  >
+                            onNodesChange={onNodesChange}
+                            onEdgesChange={onEdgesChange}
+                            onConnect={onConnect}  >
                             <Background />
                             <Controls />
                         </ReactFlow>
@@ -102,20 +135,14 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
                 </Flex>
             </Flex>
         </ReactFlowProvider>
-    )
-}
-
+    );
+};
 
 const CustomNode = ({ id, data }: any) => {
-    const { onNodeDelete, role, templateId } = data;
-
-    const handleDelete = () => {
-        onNodeDelete(role, templateId)
-    };
+    const { onNodeDelete, templateId } = data;
 
     return (
         <Box position="relative" padding="1em" border="1px solid #ccc" borderRadius="8px" bg="white" shadow="md" maxWidth="200px">
-
             <div style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{data.label}</div>
             <Handle type="target" position={Position.Top} />
             <Handle type="source" position={Position.Bottom} />
@@ -124,3 +151,38 @@ const CustomNode = ({ id, data }: any) => {
 };
 
 const nodeTypes = { customNode: CustomNode };
+
+// Custom Edge Component
+const CustomEdge: React.FC<EdgeProps> = ({ id, sourceX, sourceY, targetX, targetY, style, data }: EdgeProps) => {
+    const edgePath = `M${sourceX},${sourceY} C${sourceX + 50},${sourceY} ${targetX - 50},${targetY} ${targetX},${targetY}`;
+    const markerEnd = 'url(#arrowhead)';
+    const labelX = (sourceX + targetX) / 2;
+    const labelY = (sourceY + targetY) / 2;
+
+    const onEdgeClick = () => {
+        if (data?.onEdgeDelete) {
+            data.onEdgeDelete();
+        }
+    };
+
+    return (
+        <>
+            <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+            <EdgeLabelRenderer>
+                <div
+                    style={{
+                        position: 'absolute',
+                        transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                        fontSize: 12,
+                        pointerEvents: 'all',
+                    }}
+                    className="nodrag nopan"
+                >
+                    <button className="edgebutton" onClick={onEdgeClick}>
+                        ×
+                    </button>
+                </div>
+            </EdgeLabelRenderer>
+        </>
+    );
+};
