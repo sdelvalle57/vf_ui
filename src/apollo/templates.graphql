@@ -42,6 +42,12 @@ fragment RecipeTemplateWithRecipeFlowsFragment on RecipeTemplateWithRecipeFlows 
   recipeFlows {
     ...RecipeFlowTemplateWithDataFieldsFragment
   }
+  blacklists {
+    id
+    mapTemplateId
+    recipeTemplateId
+    recipeTemplatePredecesorId
+  }
 }
 
 fragment BlacklistFragment on RecipeTemplateBlacklist {

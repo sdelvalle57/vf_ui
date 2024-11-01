@@ -266,9 +266,6 @@ const TemplateRules = ({ mapId, templates, blacklists }: Props) => {
                             <Background />
                             <Controls />
                         </ReactFlow>
-                        {
-
-                        }
                         <Panel position='bottom-center'>
                             {
                                 selectedTemplate ?
