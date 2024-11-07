@@ -10,7 +10,7 @@ interface Props {
 }
 
 const RecipeInfo = ({ recipe }: Props) => {
-
+    console.log("recipe", recipe)
     return (
         <Box>
             <Card style={{margin: "2em auto", textAlign:"center"}} maxW='sm'>

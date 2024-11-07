@@ -23,8 +23,6 @@ const RecipeInfoPage: NextPage = () => {
         get()
     }, [recipe_id])
 
-    console.log("data", data)
-
     if (!recipe_id) return <Alert status='error'>No Resource Specification Id Provided</Alert>
     if (error) return <Alert status='error'>{error.message}</Alert>
     if (loading) return <Spinner />

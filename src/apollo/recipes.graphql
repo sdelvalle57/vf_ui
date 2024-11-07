@@ -80,15 +80,11 @@ mutation CreateRecipe(
 
 mutation SetRecipeProcesses(
   $recipeId: Uuid!,
-  $recipeTemplateIds: [Uuid!]!,
-  $name: String!,
-  $relations: [RecipeProcessRelation!]!
+  $processes: [InputProcessRelation!]!
 ) {
   setRecipeProcesses(
     recipeId: $recipeId,
-    recipeTemplateIds: $recipeTemplateIds,
-    name: $name,
-    relations: $relations
+    processes: $processes
   ) {
     recipeProcess {
       id

@@ -29,17 +29,7 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
     const [processRelations, setProcessRelations] = useState<ProcessRelation[]>([]);
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
 
-    const [setRecipeProcesses, { loading, error }] = useSetRecipeProcessesMutation({
-        onCompleted: async (data) => {
-            toast({
-                title: "Economic Resource created.",
-                description: `${recipe.recipe.name} data was successfully created.`,
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-            });
-        },
-    });
+    const [setRecipeProcesses, { loading, error }] = useSetRecipeProcessesMutation();
 
     useEffect(() => {
         if (error) {
@@ -157,7 +147,32 @@ export const RecipeProcessEditor = ({ recipe }: Props) => {
     const onSave = async (e: React.FormEvent) => {
         e.preventDefault();
         const templates = nodes.map(n => n.data.template.id)
-        console.log("templates", templates)
+        console.log("templates", processRelations)
+
+        try {
+            const data = await setRecipeProcesses({
+                variables: {
+                    recipeId: recipe.recipe.id,
+                    processes: processRelations.map(p => {
+                        return {
+                            name: p.template.name,
+                            template: p.template.id,
+                            node: p.nodeId,
+                            predecessors: p.predecessors.map(d => {
+                                return {
+                                    node: d.nodeId,
+                                    template: d.template.id
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+            console.log("data", data)
+        } catch(e: any) {
+            console.log("error", e)
+        }
+        
         // TODO: save the processRelations state
         console.log('Saving process relations:', JSON.stringify(processRelations.map(p => {
             return {
